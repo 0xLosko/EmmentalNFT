@@ -3,6 +3,9 @@
 */.next
 **/.idea
 **/.vscode
+.idea
+.vscode
+.DS_Store
 **/.DS_Store
 # Hardhat files
 */cache
