@@ -1,10 +1,9 @@
 */node_modules
 */.env
 */.next
-*/.idea
-*/.vscode
-*.DS_STORE
-*.Ds_Store
+**/.idea
+**/.vscode
+**/.DS_Store
 # Hardhat files
 */cache
 */artifacts
@@ -19,4 +18,15 @@
 
 # Hardhat Ignition default folder for deployments against a local node
 ignition/deployments/chain-31337
+
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
 
