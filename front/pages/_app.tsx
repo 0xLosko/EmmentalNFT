@@ -33,6 +33,7 @@ import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
 import {ReactElement, ReactNode} from "react";
 import {NextPage} from "next";
+import Layout from "./layout";
 
 
 const getSiweMessageOptions: GetSiweMessageOptions = () => ({
@@ -49,7 +50,7 @@ type AppPropsWithLayout = AppProps & {
 }
 
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
-  const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
+  const getLayout = Component.getLayout ?? ((page) => <Layout>{page}</Layout>);
     return (
         <WagmiProvider config={config}>
           <SessionProvider refetchInterval={0} session={pageProps.session}>

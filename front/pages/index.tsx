@@ -1,10 +1,9 @@
-import type { NextPage } from 'next';
-import Homecon from '../container/home';
+import {NextPageWithLayout} from "./_app";
 
-const Home: NextPage = () => {
-  return (
-        <Homecon/>
-  );
+const Discover: NextPageWithLayout = () => {
+    return (
+        'discover'
+    );
 };
 
-export default Home;
+export default Discover;
