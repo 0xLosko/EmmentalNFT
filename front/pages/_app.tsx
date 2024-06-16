@@ -8,9 +8,11 @@ import { RainbowKitSiweNextAuthProvider } from '@rainbow-me/rainbowkit-siwe-next
 import {
   arbitrum,
   base,
+  localhost,
   mainnet,
   optimism,
   polygon,
+    hardhat,
   sepolia,
   zora,
 } from 'wagmi/chains';
@@ -20,8 +22,7 @@ const config = getDefaultConfig({
   appName: 'RainbowKit App',
   projectId: '12d66ee7fe7f31eef0181c18a51f4873',
   chains: [
-    mainnet,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [sepolia] : []),
+    hardhat, sepolia
   ],
   ssr: true,
 });

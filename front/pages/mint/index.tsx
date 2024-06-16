@@ -1,8 +1,23 @@
 import { Button } from "../../components/ui/button"
-import {NextPageWithLayout} from "../_app";
+import {NextPageWithLayout} from "../_app"
 import Image from 'next/image'
+import { useAccount, useReadContract, type BaseError, useWriteContract, useWaitForTransactionReceipt } from "wagmi"
+import { contractAddress, contractAbi } from "../../constants"
 
 const Mint: NextPageWithLayout = () => {
+    const { address } = useAccount()
+    const { data: hash, error: airdropError, isPending, writeContract } = useWriteContract()
+    const mintNft = async() => {
+        writeContract({
+            address: contractAddress,
+            abi: contractAbi,
+            functionName: 'mint',
+            account: address
+        });
+    }
+    if (airdropError) {
+        return <div>Erreur lors de la tentative de mint: {airdropError.message}</div>;
+    }
     return (
         <div className="flex items-center justify-center gap-9 min-h-[500px]">
             <div className="bg-amber-400 rounded-xl">
@@ -33,7 +48,7 @@ const Mint: NextPageWithLayout = () => {
                         <h4>Minted: </h4>
                         <h3>xxx</h3>
                     </div>
-                    <Button className="ml-auto">Mint</Button>
+                    <Button className="ml-auto" onClick={() => mintNft()}>Mint</Button>
                 </div>
             </div>
         </div>

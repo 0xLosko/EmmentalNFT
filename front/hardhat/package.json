@@ -2,6 +2,14 @@
   "name": "hardhat-project",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox-viem": "^3.0.0",
-    "hardhat": "^2.22.5"
+    "hardhat": "^2.22.5",
+    "ts-node": "^10.9.2"
+  },
+  "dependencies": {
+    "@nomiclabs/hardhat-ethers": "^2.2.3",
+    "@openzeppelin/contracts": "^5.0.2",
+    "ethers": "^5.7.2",
+    "install": "^0.13.0",
+    "npm": "^10.8.1"
   }
 }
