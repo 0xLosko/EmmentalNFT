@@ -11,6 +11,7 @@
 **/yarn.lock
 **/dist
 **/build
+**/tsconfig.tsbuildinfo
 
 # Framework generated files
 # NextJS
