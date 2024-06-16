@@ -107,5 +107,17 @@ contract EmmentalCollection is ERC721{
     function getNbMint() public view returns (uint256){
         return indexMint;
     }
+
+    function getNftIdForWallet() public view returns (uint256[] memory) {
+        uint256[] memory rt = new uint256[](balanceOf(msg.sender)); //override si nft listé le balance of sinon on perds l'info du nft listé
+        uint256 j = 0;
+        for (uint256 i = 0; i < getNbMint(); i++){
+            if(_requireOwned(i) == msg.sender){
+                rt[j] = i;
+                j++;
+            }
+        }
+        return rt;
+    }
     //get details nft
 }

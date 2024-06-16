@@ -1,4 +1,4 @@
-export const contractAddress="0x0165878A594ca255338adfa4d48449f69242Eb8F"
+export const contractAddress="0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1"
 export const contractAbi =[
     {
         "inputs": [],
@@ -353,6 +353,19 @@ export const contractAbi =[
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "getNftIdForWallet",
+        "outputs": [
+            {
+                "internalType": "uint256[]",
+                "name": "",
+                "type": "uint256[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "address",
@@ -655,4 +668,4 @@ export const contractAbi =[
         "stateMutability": "nonpayable",
         "type": "function"
     }
-  ]
+]
