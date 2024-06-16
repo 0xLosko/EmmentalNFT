@@ -83,6 +83,7 @@ contract EmmentalCollection is ERC721{
     }
 
     function buyNft(uint _tokenId) public payable {
+        //CONDITION POUR PAS SE LACHETER A SOIT MEME
         uint256 indexNftInMarket = getIdForNftInMarket(_tokenId);
         if(msg.value != market[indexNftInMarket].price){
             revert DONT_HAVE_MONEY_FOR(market[indexNftInMarket].price);
@@ -92,9 +93,19 @@ contract EmmentalCollection is ERC721{
         deleteNftInMarket(_tokenId);
     }
 
+
     //overide balance of avec les nft listés
 
-    //voir tout les nft listés
+    function getAllNftInMarket() public view returns (Listed[] memory){
+        Listed[] memory rt = new Listed[](nbListedNft);
+        for (uint256 i = 0; i < nbListedNft; i++){
+            rt[i] = market[i];
+        }
+        return rt;
+    }
 
+    function getNbMint() public view returns (uint256){
+        return indexMint;
+    }
     //get details nft
 }

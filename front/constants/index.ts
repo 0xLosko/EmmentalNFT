@@ -1,5 +1,5 @@
-export const contractAddress="0x5FbDB2315678afecb367f032d93F642f64180aa3"
-export const contractAbi = [
+export const contractAddress="0x0165878A594ca255338adfa4d48449f69242Eb8F"
+export const contractAbi =[
     {
         "inputs": [],
         "stateMutability": "nonpayable",
@@ -267,6 +267,41 @@ export const contractAbi = [
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "getAllNftInMarket",
+        "outputs": [
+            {
+                "components": [
+                    {
+                        "internalType": "uint256",
+                        "name": "price",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "address",
+                        "name": "seller",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "tokenId",
+                        "type": "uint256"
+                    },
+                    {
+                        "internalType": "uint256",
+                        "name": "timestamp",
+                        "type": "uint256"
+                    }
+                ],
+                "internalType": "struct EmmentalCollection.Listed[]",
+                "name": "",
+                "type": "tuple[]"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "uint256",
@@ -294,6 +329,19 @@ export const contractAbi = [
             }
         ],
         "name": "getIdForNftInMarket",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "getNbMint",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -607,4 +655,4 @@ export const contractAbi = [
         "stateMutability": "nonpayable",
         "type": "function"
     }
-]
+  ]
