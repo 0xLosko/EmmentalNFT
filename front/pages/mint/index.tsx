@@ -19,7 +19,7 @@ const Mint: NextPageWithLayout = () => {
         return <div>Erreur lors de la tentative de mint: {airdropError.message}</div>;
     }
     return (
-        <div className="flex items-center justify-center gap-9 min-h-[500px]">
+        <div className="flex items-center justify-center gap-9 min-h[500px] mb-16">
             <div className="flex justify-center items-center bg-amber-400 rounded-2xl">
                 <Image
                     src="/ico/ex_nft.png"
@@ -29,10 +29,9 @@ const Mint: NextPageWithLayout = () => {
                     alt="NFT Template"
                 />
             </div>
-            <div className="min-h-[500px] p-3 max-w-[50%]">
+            <div className="flex justify-center flex-col min-h-[500px] p-3 max-w-[50%]">
                 <h1 className="text-4xl w-fit">NFT CHEESY MINTPAGE</h1>
                 <h3 className="w-4/5 mt-9">
-                    Lorem Ipsum is simply dummy text of the printing and typesetting industry.
                     Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,
                     when an unknown printer took a galley of type and scrambled it to make a type specimen book.
                     It has survived not only five centuries, but also the leap into electronic typesetting,
