@@ -2,7 +2,7 @@ import { NextPageWithLayout } from "../_app";
 import { useEffect, useState } from "react";
 import { useAccount, useReadContract } from "wagmi";
 import { contractAddress, contractAbi } from "../../constants";
-
+import Image from 'next/image'
 const Profil: NextPageWithLayout = () => {
     const { address } = useAccount();
     const [nft, setNft] = useState<number[]>([]);
@@ -36,7 +36,8 @@ const Profil: NextPageWithLayout = () => {
     return (
         <div className="flex gap-3">
             {nft.map((tokenId, index) => (
-                <div key={index} className="w-[350px] h-[350px] bg-amber-400 rounded-3xl flex justify-center items-center">
+                <div key={index} className="flex flex-col w-[350px] h-[350px] bg-amber-400 rounded-3xl flex justify-center items-center">
+                    <Image src="ico/logo.svg" alt="" height={100} width={100}/>
                     <h2>#{tokenId}</h2>
                 </div>
             ))}

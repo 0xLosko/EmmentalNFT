@@ -20,11 +20,12 @@ const Mint: NextPageWithLayout = () => {
     }
     return (
         <div className="flex items-center justify-center gap-9 min-h-[500px]">
-            <div className="bg-amber-400 rounded-xl">
+            <div className="flex justify-center items-center bg-amber-400 rounded-2xl">
                 <Image
-                    src="/profile.png"
+                    src="/ico/ex_nft.png"
                     width={400}
-                    height={500}
+                    height={400}
+                    className="rounded-2xl"
                     alt="NFT Template"
                 />
             </div>
