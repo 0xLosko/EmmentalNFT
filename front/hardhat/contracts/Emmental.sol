@@ -9,7 +9,11 @@ contract EmmentalCollection is ERC721{
 
     uint256 public nbListedNft;
 
-    constructor() ERC721("Emmental", "EMN") {}
+    uint256 public maximumSupply;
+
+    constructor(string memory name, string memory symbol, uint256 _maximumSupply) ERC721(name, symbol) {
+        maximumSupply = _maximumSupply;
+        }
 
     struct Listed {
         uint256 price;
@@ -26,9 +30,15 @@ contract EmmentalCollection is ERC721{
 
     error DONT_HAVE_MONEY_FOR(uint256 nbEth);
 
+    error MAXIMUM_SUPPLY_REACHED(uint256 maxSupl);
+
 
     function mint() public {
-        super._mint(msg.sender, indexMint); // GENERATION DES METADATAS EN FUNCTION DE L'ID
+        // Maximum supply limit if disabled if equal to 0
+        if (maximumSupply > 0 && indexMint == maximumSupply-1){
+            revert MAXIMUM_SUPPLY_REACHED(maximumSupply);
+        }
+        super._safeMint(msg.sender, indexMint); // GENERATION DES METADATAS EN FUNCTION DE L'ID
         indexMint++;
     }
 
