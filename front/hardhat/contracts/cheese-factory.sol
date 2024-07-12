@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.24;
 
-import {EmmentalCollection} from "./ERC721.sol";
+import {CheeseCollection} from "./cheese-collection.sol";
 
-contract EmmentalFactory{
+contract CheeseFactory{
 
     // =============================================================
     //                            ERRORS
@@ -25,7 +25,7 @@ contract EmmentalFactory{
     //                            STRUCTS
     // =============================================================
 
-    EmmentalCollection[] public collections;
+    CheeseCollection[] public collections;
 
     // =============================================================
     //                            EVENTS
@@ -38,18 +38,18 @@ contract EmmentalFactory{
     // =============================================================
 
      function createCollection(string memory name, string memory symbol, uint256 maximumSupply ) external{
-        if (!isNameAvailable(name)){
+        if (isNameExists(name)){
             revert COLLECTION_NAME_ALREADY_EXISTS(name);
-        }else if(!isSymbolAvailable(symbol)){
+        }else if(isSymbolExists(symbol)){
             revert COLLECTION_SYMBOL_ALREADY_EXISTS(symbol);
         }
-       EmmentalCollection collection = new EmmentalCollection(name, symbol, maximumSupply);// index
+       CheeseCollection collection = new CheeseCollection(name, symbol, maximumSupply);// index
        collections.push(collection);
        nbListedCollection++;
        emit CollectionCreated(address(collection), name, symbol);
      }
 
-     function isNameAvailable(string memory name) public view returns (bool){
+     function isNameExists(string memory name) public view returns (bool){
         for (uint256 i=0; i < nbListedCollection; i++) {
             if ( keccak256(abi.encodePacked(collections[i].name)) == keccak256(abi.encodePacked(name))){
                 return true;
@@ -58,7 +58,7 @@ contract EmmentalFactory{
        return false;
      }
 
-     function isSymbolAvailable(string memory symbol) public view returns (bool){
+     function isSymbolExists(string memory symbol) public view returns (bool){
         for (uint256 i=0; i < nbListedCollection; i++) {
             if ( keccak256(abi.encodePacked(collections[i].symbol)) == keccak256(abi.encodePacked(symbol))){
                 return true;
@@ -67,11 +67,11 @@ contract EmmentalFactory{
        return false;
      }
 
-     function getCollectionById(uint256 index) public view returns (EmmentalCollection){
+     function getCollectionById(uint256 index) public view returns (CheeseCollection){
         return collections[index];
      }
 
-     function getCollectionByName(string memory name) public view returns (EmmentalCollection){
+     function getCollectionByName(string memory name) public view returns (CheeseCollection){
         for (uint256 i=0; i < nbListedCollection; i++) {
             if ( keccak256(abi.encodePacked(collections[i].name)) == keccak256(abi.encodePacked(name))){
                 return collections[i];
@@ -80,8 +80,8 @@ contract EmmentalFactory{
        revert COLLECTION_NOT_FOUND(name);
      }
 
-     function getCollections() external view returns(EmmentalCollection[] memory){
-        EmmentalCollection[] memory _collections = new EmmentalCollection[](nbListedCollection);
+     function getCollections() external view returns(CheeseCollection[] memory){
+        CheeseCollection[] memory _collections = new CheeseCollection[](nbListedCollection);
        for (uint256 i=0; i < nbListedCollection; i++) {
         _collections[i] = collections[i];
        }

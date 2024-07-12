@@ -3,7 +3,7 @@ pragma solidity ^0.8.24;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract EmmentalCollection is ERC721{
+contract CheeseCollection is ERC721{
 
     // =============================================================
     //                            ERRORS
@@ -15,7 +15,7 @@ contract EmmentalCollection is ERC721{
 
     error DONT_HAVE_MONEY_FOR(uint256 nbEth);
 
-    error MAXIMUM_SUPPLY_REACHED(uint256 maxSupl);
+    error MAXIMUM_SUPPLY_REACHED(uint256 maximumSupply);
 
     // =============================================================
     //                         TOKEN COUNTERS
