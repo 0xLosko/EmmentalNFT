@@ -11,6 +11,10 @@ contract EmmentalFactory{
 
     error COLLECTION_NOT_FOUND(string);
 
+    error COLLECTION_NAME_ALREADY_EXISTS(string);
+
+    error COLLECTION_SYMBOL_ALREADY_EXISTS(string);
+
     // =============================================================
     //                     COLLECTIONS COUNTERS
     // =============================================================
@@ -30,14 +34,37 @@ contract EmmentalFactory{
     event CollectionCreated(address collectionAddress, string name, string symbol );
 
     // =============================================================
-    //                        IMPLEMENTATION
+    //                   FACTORY IMPLEMENTATION
     // =============================================================
 
      function createCollection(string memory name, string memory symbol, uint256 maximumSupply ) external{
+        if (!isNameAvailable(name)){
+            revert COLLECTION_NAME_ALREADY_EXISTS(name);
+        }else if(!isSymbolAvailable(symbol)){
+            revert COLLECTION_SYMBOL_ALREADY_EXISTS(symbol);
+        }
        EmmentalCollection collection = new EmmentalCollection(name, symbol, maximumSupply);// index
        collections.push(collection);
        nbListedCollection++;
        emit CollectionCreated(address(collection), name, symbol);
+     }
+
+     function isNameAvailable(string memory name) public view returns (bool){
+        for (uint256 i=0; i < nbListedCollection; i++) {
+            if ( keccak256(abi.encodePacked(collections[i].name)) == keccak256(abi.encodePacked(name))){
+                return true;
+            }
+       }
+       return false;
+     }
+
+     function isSymbolAvailable(string memory symbol) public view returns (bool){
+        for (uint256 i=0; i < nbListedCollection; i++) {
+            if ( keccak256(abi.encodePacked(collections[i].symbol)) == keccak256(abi.encodePacked(symbol))){
+                return true;
+            }
+       }
+       return false;
      }
 
      function getCollectionById(uint256 index) public view returns (EmmentalCollection){
