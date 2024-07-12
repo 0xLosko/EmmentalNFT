@@ -5,13 +5,33 @@ import {EmmentalCollection} from "./ERC721.sol";
 
 contract EmmentalFactory{
 
+    // =============================================================
+    //                            ERRORS
+    // =============================================================
+
+    error COLLECTION_NOT_FOUND(string);
+
+    // =============================================================
+    //                     COLLECTIONS COUNTERS
+    // =============================================================
+
     uint256 public nbListedCollection;
+
+    // =============================================================
+    //                            STRUCTS
+    // =============================================================
 
     EmmentalCollection[] public collections;
 
+    // =============================================================
+    //                            EVENTS
+    // =============================================================
+
     event CollectionCreated(address collectionAddress, string name, string symbol );
 
-    error COLLECTION_NOT_FOUND(string);
+    // =============================================================
+    //                        IMPLEMENTATION
+    // =============================================================
 
      function createCollection(string memory name, string memory symbol, uint256 maximumSupply ) external{
        EmmentalCollection collection = new EmmentalCollection(name, symbol, maximumSupply);// index

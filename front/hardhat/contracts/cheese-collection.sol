@@ -5,24 +5,9 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 contract EmmentalCollection is ERC721{
 
-    uint256 private indexMint;
-
-    uint256 public nbListedNft;
-
-    uint256 public maximumSupply;
-
-    constructor(string memory name, string memory symbol, uint256 _maximumSupply) ERC721(name, symbol) {
-        maximumSupply = _maximumSupply;
-        }
-
-    struct Listed {
-        uint256 price;
-        address seller;
-        uint256 tokenId;
-        uint256 timestamp;
-    }
-
-    mapping(uint256 => Listed) public market;
+    // =============================================================
+    //                            ERRORS
+    // =============================================================
 
     error ALREADY_LISTED(uint256 nftId);
 
@@ -32,6 +17,63 @@ contract EmmentalCollection is ERC721{
 
     error MAXIMUM_SUPPLY_REACHED(uint256 maxSupl);
 
+    // =============================================================
+    //                         TOKEN COUNTERS
+    // =============================================================
+
+    /**
+     * Next Nft ID or Minted Nft counter
+     */
+    uint256 private indexMint;
+    /**
+     * Listed Nft (In the market) counter.
+     */
+    uint256 public nbListedNft;
+    /**
+     * Maximum Nft supply (also higher Nft ID)
+     */
+    uint256 public maximumSupply;
+
+    // =============================================================
+    //                            STRUCTS
+    // =============================================================
+
+    struct Listed {
+        uint256 price;
+        address from;
+        address to;
+        uint256 tokenId;
+        uint256 timestamp;
+    }
+
+    struct NftHistory {
+        mapping(uint256 => Listed) history;
+        uint256 count;
+    }
+
+    mapping(uint256 => Listed) public market;
+
+    mapping(uint256 => NftHistory) public marketHistory;
+
+    // =============================================================
+    //                            Events
+    // =============================================================
+
+    event NftMinted(uint256 _tokenId, address _owner);
+
+    event NftListed(uint256 _tokenId, uint256 _price);
+
+    event NftUnlisted(uint256 _tokenId);
+
+    event NftSold(uint256 _tokenId);
+
+    // =============================================================
+    //                        Implementation
+    // =============================================================
+
+    constructor(string memory name, string memory symbol, uint256 _maximumSupply) ERC721(name, symbol) {
+        maximumSupply = _maximumSupply;
+        }
 
     function mint() public {
         // Maximum supply limit if disabled if equal to 0
@@ -40,6 +82,7 @@ contract EmmentalCollection is ERC721{
         }
         super._safeMint(msg.sender, indexMint); // GENERATION DES METADATAS EN FUNCTION DE L'ID
         indexMint++;
+        emit NftMinted(indexMint-1, msg.sender);
     }
 
     function isListed(uint256 _tokenId) public view returns (bool) {
@@ -55,10 +98,11 @@ contract EmmentalCollection is ERC721{
         if (isListed(_tokenId)) {
             revert ALREADY_LISTED(_tokenId);
         }
-        market[nbListedNft] = Listed(_price, msg.sender, _tokenId, block.timestamp);
+        market[nbListedNft] = Listed(_price, msg.sender, address(this), _tokenId, block.timestamp);
         nbListedNft++;
         approve(address(this), _tokenId);
         transferFrom(msg.sender, address(this), _tokenId);
+        emit NftListed(_tokenId, _price);
     }
 
     function getIdForNftInMarket(uint256 _tokenId) public view returns (uint256) {
@@ -69,38 +113,43 @@ contract EmmentalCollection is ERC721{
                 }
             }
         }
-        revert("NFT not listed in market");
+        revert("Nft not listed in market");
     }
 
     function unListNft(uint256 _tokenId) public {
         if (isListed(_tokenId)) {
             uint256 indexNftInMarket = getIdForNftInMarket(_tokenId);
-            if (msg.sender != market[indexNftInMarket].seller) {
+            if (msg.sender != market[indexNftInMarket].from) {
                 revert U_NOT_THE_OWNER(_tokenId);
             }
             deleteNftInMarket(_tokenId);
             transferFrom(address(this), msg.sender, _tokenId);
+            emit NftUnlisted(_tokenId);
         }
     }
 
     function deleteNftInMarket(uint256 _tokenId) private {
         uint256 indexNftInMarket = getIdForNftInMarket(_tokenId);
+        marketHistory[_tokenId].history[marketHistory[_tokenId].count] = market[indexNftInMarket];
+        marketHistory[_tokenId].history[marketHistory[_tokenId].count].to = msg.sender;
+        marketHistory[_tokenId].count++;
         for (uint256 i = indexNftInMarket+1; i < nbListedNft; i++){
             market[i-1] = market[i];
         }
-        delete market[nbListedNft];
         nbListedNft--;
     }
 
-    function buyNft(uint _tokenId) public payable {
+    function buyNft(uint256 _tokenId) public payable {
+        // NFT PRICE IN WEI !!
         //CONDITION POUR PAS SE LACHETER A SOIT MEME
         uint256 indexNftInMarket = getIdForNftInMarket(_tokenId);
         if(msg.value != market[indexNftInMarket].price){
             revert DONT_HAVE_MONEY_FOR(market[indexNftInMarket].price);
         }
-        payable(market[indexNftInMarket].seller).transfer(msg.value);
+        payable(market[indexNftInMarket].from).transfer(msg.value);
         _transfer(address(this), msg.sender, _tokenId);
         deleteNftInMarket(_tokenId);
+        emit NftSold(_tokenId);
     }
 
 
@@ -128,6 +177,14 @@ contract EmmentalCollection is ERC721{
             }
         }
         return rt;
+    }
+
+    function getNftHistory(uint256 _tokenId) public view returns (Listed[] memory){
+        Listed[] memory history = new Listed[](marketHistory[_tokenId].count);
+        for (uint256 i = 0; i < marketHistory[_tokenId].count; i++){
+            history[i] = marketHistory[_tokenId].history[i];
+        }
+        return history;
     }
     //get details nft
 }
