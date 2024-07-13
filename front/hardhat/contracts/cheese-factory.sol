@@ -28,6 +28,16 @@ contract CheeseFactory{
     CheeseCollection[] public collections;
 
     // =============================================================
+    //                          CONSTANTS
+    // =============================================================
+
+    enum FilterType{
+      ALL,
+      MARKET,
+      OWNED
+    }
+
+    // =============================================================
     //                            EVENTS
     // =============================================================
 
@@ -37,13 +47,13 @@ contract CheeseFactory{
     //                   FACTORY IMPLEMENTATION
     // =============================================================
 
-     function createCollection(string memory name, string memory symbol, uint256 maximumSupply ) external{
+     function createCollection(string memory name, string memory symbol, uint256 maximumSupply, string memory baseURI_ ) external{
         if (isNameExists(name)){
             revert COLLECTION_NAME_ALREADY_EXISTS(name);
         }else if(isSymbolExists(symbol)){
             revert COLLECTION_SYMBOL_ALREADY_EXISTS(symbol);
         }
-       CheeseCollection collection = new CheeseCollection(name, symbol, maximumSupply);// index
+       CheeseCollection collection = new CheeseCollection(name, symbol, maximumSupply, baseURI_);// index
        collections.push(collection);
        nbListedCollection++;
        emit CollectionCreated(address(collection), name, symbol);
@@ -80,10 +90,16 @@ contract CheeseFactory{
        revert COLLECTION_NOT_FOUND(name);
      }
 
-     function getCollections() external view returns(CheeseCollection[] memory){
+     function getCollections(FilterType filter) external view returns(CheeseCollection[] memory){
         CheeseCollection[] memory _collections = new CheeseCollection[](nbListedCollection);
        for (uint256 i=0; i < nbListedCollection; i++) {
-        _collections[i] = collections[i];
+        if (filter == FilterType.MARKET && collections[i].getMarketSize() > 0){
+          _collections[i] = collections[i];
+        }else if (filter == FilterType.OWNED && collections[i].balanceOf(msg.sender) > 0){
+          _collections[i] = collections[i];
+        }else if (filter == FilterType.ALL ){
+          _collections[i] = collections[i];
+        }
        }
        return _collections;
      }

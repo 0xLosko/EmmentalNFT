@@ -1,26 +1,43 @@
-import {NextPageWithLayout} from "./_app";
-import {useEffect} from "react";
-import { useAccount, useReadContract, type BaseError, useWriteContract, useWaitForTransactionReceipt } from "wagmi"
-import { contractAddress, contractAbi } from "../constants"
-import Image from "next/image";
+import { NextPageWithLayout } from "./_app";
+import { useEffect } from "react";
+import {
+    useAccount,
+    useReadContract,
+    type BaseError,
+    useWriteContract,
+    useWaitForTransactionReceipt,
+} from "wagmi";
+import { contractAddress, FactoryContractAbi } from "../constants";
+import CollectionCard, { FilterType } from "../components/ui/collectionCard";
+import { BusyBox } from "../components/ui/busy-box";
 
 const Discover: NextPageWithLayout = () => {
-    const { data: totalMinted, isLoading: totalMintedLoading, refetch: refetchTotalMinted, error: test} = useReadContract({
+    const filter = FilterType.ALL;
+
+    const {
+        data: collectionList,
+        isLoading: collectionListLoading,
+        refetch: refetchcollectionList,
+        error: err,
+    } = useReadContract({
         address: contractAddress,
-        abi: contractAbi,
-        functionName: 'getNbMint',
-    })
+        abi: FactoryContractAbi,
+        functionName: "getCollections",
+        args: [filter],
+    });
 
     useEffect(() => {
-       refetchTotalMinted();
-    }, [])
+        refetchcollectionList();
+    }, []);
+
+    if (collectionListLoading || !collectionList || err) {
+        // Gost CircularProgress ! fok
+        return <BusyBox />;
+    }
     return (
-        <div className="flex gap-3">
-            {Array.from({ length: Number(totalMinted) }).map((_, index) => (
-                <div key={index} className="flex flex-col w-[350px] h-[350px] bg-amber-400 rounded-3xl flex justify-center items-center">
-                    <Image src="ico/logo.svg" alt="" height={100} width={100}/>
-                    <h2>#{index}</h2>
-                </div>
+        <div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+            {(collectionList as `0x${string}`[]).map((item, index) => (
+                <CollectionCard key={index} address={item} filter={filter} />
             ))}
         </div>
     );

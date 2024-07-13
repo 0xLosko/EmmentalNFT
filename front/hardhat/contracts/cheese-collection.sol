@@ -2,8 +2,10 @@
 pragma solidity ^0.8.24;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
-contract CheeseCollection is ERC721{
+contract CheeseCollection is ERC721URIStorage{
 
     // =============================================================
     //                            ERRORS
@@ -18,7 +20,7 @@ contract CheeseCollection is ERC721{
     error MAXIMUM_SUPPLY_REACHED(uint256 maximumSupply);
 
     // =============================================================
-    //                         TOKEN COUNTERS
+    //                         NFT COUNTERS
     // =============================================================
 
     /**
@@ -29,10 +31,19 @@ contract CheeseCollection is ERC721{
      * Listed Nft (In the market) counter.
      */
     uint256 public nbListedNft;
+
+    // =============================================================
+    //                         CONSTANTS (no initial stats)
+    // =============================================================
+
     /**
      * Maximum Nft supply (also higher Nft ID)
      */
     uint256 public maximumSupply;
+    /**
+     * Base URI to find NFT images
+     */
+    string public baseURI;
 
     // =============================================================
     //                            STRUCTS
@@ -71,7 +82,8 @@ contract CheeseCollection is ERC721{
     //                        Implementation
     // =============================================================
 
-    constructor(string memory name, string memory symbol, uint256 _maximumSupply) ERC721(name, symbol) {
+    constructor(string memory name, string memory symbol, uint256 _maximumSupply, string memory baseURI_) ERC721(name, symbol) {
+        baseURI = baseURI_;
         maximumSupply = _maximumSupply;
         }
 
@@ -81,6 +93,7 @@ contract CheeseCollection is ERC721{
             revert MAXIMUM_SUPPLY_REACHED(maximumSupply);
         }
         super._safeMint(msg.sender, indexMint); // GENERATION DES METADATAS EN FUNCTION DE L'ID
+        super._setTokenURI(indexMint, string.concat(baseURI, Strings.toString(indexMint)));
         indexMint++;
         emit NftMinted(indexMint-1, msg.sender);
     }
@@ -163,8 +176,16 @@ contract CheeseCollection is ERC721{
         return rt;
     }
 
+    function getMarketSize() public view returns (uint256){
+        return nbListedNft;
+    }
+
     function getNbMint() public view returns (uint256){
         return indexMint;
+    }
+
+    function getMaximumSupply() public view returns (uint256){
+        return maximumSupply;
     }
 
     function getNftIdForWallet() public view returns (uint256[] memory) {
@@ -186,5 +207,6 @@ contract CheeseCollection is ERC721{
         }
         return history;
     }
-    //get details nft
+    
+    // function getFloorPrice();
 }

@@ -1,17 +1,22 @@
 import { NextPageWithLayout } from "../_app";
 import { useEffect, useState } from "react";
 import { useAccount, useReadContract } from "wagmi";
-import { contractAddress, contractAbi } from "../../constants";
+import { contractAddress, CollectionContractAbi } from "../../constants";
 import Image from 'next/image'
 const Profil: NextPageWithLayout = () => {
     const { address } = useAccount();
     const [nft, setNft] = useState<number[]>([]);
 
-    const { data, isLoading: viewNftLoading, refetch, error: readError } = useReadContract({
+    const {
+        data,
+        isLoading: viewNftLoading,
+        refetch,
+        error: readError,
+    } = useReadContract({
         address: contractAddress,
-        abi: contractAbi,
-        functionName: 'getNftIdForWallet',
-        account: address
+        abi: CollectionContractAbi,
+        functionName: "getNftIdForWallet",
+        account: address,
     });
 
     useEffect(() => {
