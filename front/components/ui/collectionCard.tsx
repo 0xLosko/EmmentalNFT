@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useReadContract } from "wagmi";
 import { CollectionContractAbi } from "../../constants";
 import { BusyBox } from "./busy-box";
-import { Card } from "./card";
+import Card from "./card";
 
 export enum FilterType {
     ALL,
@@ -17,15 +17,17 @@ export default function CollectionCard({
     address: `0x${string}`;
     filter: FilterType;
 }) {
-    //
+    const contractConfig = {
+        address: address,
+        abi: CollectionContractAbi,
+    };
     const {
         data: NbMint,
         isLoading: NbMintLoading,
         refetch: refetchNbMint,
         error: err,
     } = useReadContract({
-        address: address,
-        abi: CollectionContractAbi,
+        ...contractConfig,
         functionName: "getNbMint",
     });
 
@@ -34,8 +36,7 @@ export default function CollectionCard({
         isLoading: maximumSupplyLoading,
         refetch: refetchMaximumSupply,
     } = useReadContract({
-        address: address,
-        abi: CollectionContractAbi,
+        ...contractConfig,
         functionName: "getMaximumSupply",
     });
 
@@ -44,8 +45,7 @@ export default function CollectionCard({
         isLoading: nameLoading,
         refetch: refetchName,
     } = useReadContract({
-        address: address,
-        abi: CollectionContractAbi,
+        ...contractConfig,
         functionName: "name",
     });
 
@@ -53,18 +53,18 @@ export default function CollectionCard({
         refetchNbMint();
         refetchMaximumSupply();
         refetchName();
-    }, []);
+    }, [NbMint, maximumSupply, name]);
 
-    if (NbMintLoading || maximumSupplyLoading || nameLoading || err) {
-        return <BusyBox />;
-    }
     return (
         <Card
             title={name as string}
-            description={`${(NbMint as BigInt).toString()} of ${(
-                maximumSupply as BigInt
+            description={`${((NbMint as BigInt) || 0).toString()} of ${(
+                (maximumSupply as BigInt) || 0
             ).toString()}`}
             imageSrc="ico/logo.svg"
+            loading={
+                NbMintLoading || maximumSupplyLoading || nameLoading || err ? true : false
+            }
         />
     );
 }

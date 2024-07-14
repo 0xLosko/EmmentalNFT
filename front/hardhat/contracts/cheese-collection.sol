@@ -39,6 +39,8 @@ contract CheeseCollection is ERC721URIStorage{
 
     error ALREADY_LISTED(uint256 nftId);
 
+    error NOT_LISTED(uint256 nftId);
+
     error U_NOT_THE_OWNER(uint256 nftId);
 
     error DONT_HAVE_MONEY_FOR(uint256 nbEth);
@@ -70,10 +72,23 @@ contract CheeseCollection is ERC721URIStorage{
      * Base URI to find NFT images
      */
     string public baseURI;
+    /**
+     * Aging method for this cheese family
+     */
+    Aging agingMethod;
 
     // =============================================================
     //                            STRUCTS
     // =============================================================
+
+    enum Aging {
+        cave, // Affinage en cave
+        hayloft, // Affinage en fenil
+        openAir, // Affinage à l'air libre
+        salt, // Affinage au sel
+        pressing, // Affinage par pressage
+        cold // Affinage à froid
+    }
 
     struct Listed {
         uint256 price;
@@ -88,9 +103,16 @@ contract CheeseCollection is ERC721URIStorage{
         uint256 count;
     }
 
+    struct CheeseBaseProperties {
+        uint256 productionYear;
+        uint256 shape;
+    }
+
     mapping(uint256 => Listed) public market;
 
     mapping(uint256 => NftHistory) public marketHistory;
+
+    mapping(uint256 => CheeseBaseProperties) private cheeseProperties;
 
     // =============================================================
     //                            Events
@@ -108,9 +130,11 @@ contract CheeseCollection is ERC721URIStorage{
     //                        Implementation
     // =============================================================
 
-    constructor(string memory name, string memory symbol, uint256 _maximumSupply, string memory baseURI_) ERC721(name, symbol) {
-        baseURI = baseURI_;
-        maximumSupply = _maximumSupply;
+    constructor(string memory name, string memory symbol, Aging _agingMethod, uint256 _maximumSupply, string memory baseURI_) ERC721(name, symbol) {
+        // The collection name is the cheese family
+        baseURI = baseURI_;// Should hit the collection picture eg. {www.ipfs.com/}
+        maximumSupply = _maximumSupply;// 0 for unlimited
+        agingMethod = _agingMethod;
         }
 
     function mint() public {
@@ -118,8 +142,12 @@ contract CheeseCollection is ERC721URIStorage{
         if (maximumSupply > 0 && indexMint == maximumSupply-1){
             revert MAXIMUM_SUPPLY_REACHED(maximumSupply);
         }
-        super._safeMint(msg.sender, indexMint); // GENERATION DES METADATAS EN FUNCTION DE L'ID
-        super._setTokenURI(indexMint, string.concat(baseURI, Strings.toString(indexMint)));
+        // Mint
+        super._safeMint(msg.sender, indexMint);
+        // Random base properties
+        cheeseProperties[indexMint] = CheeseBaseProperties( 0, 0);
+        // Should hit the NFT picture eg. www.ipfs.com/{5}
+        super._setTokenURI(indexMint, baseURI);//string.concat(baseURI, Strings.toString(indexMint)));
         indexMint++;
         emit NftMinted(indexMint-1, msg.sender);
     }
@@ -161,17 +189,19 @@ contract CheeseCollection is ERC721URIStorage{
             if (msg.sender != market[indexNftInMarket].from) {
                 revert U_NOT_THE_OWNER(_tokenId);
             }
-            deleteNftInMarket(_tokenId);
+            deleteNftInMarket(_tokenId, false);
             transferFrom(address(this), msg.sender, _tokenId);
             emit NftUnlisted(_tokenId);
         }
     }
 
-    function deleteNftInMarket(uint256 _tokenId) private {
+    function deleteNftInMarket(uint256 _tokenId, bool useHistory) private {
         uint256 indexNftInMarket = getIdForNftInMarket(_tokenId);
-        marketHistory[_tokenId].history[marketHistory[_tokenId].count] = market[indexNftInMarket];
-        marketHistory[_tokenId].history[marketHistory[_tokenId].count].to = msg.sender;
-        marketHistory[_tokenId].count++;
+        if (useHistory){
+            marketHistory[_tokenId].history[marketHistory[_tokenId].count] = market[indexNftInMarket];
+            marketHistory[_tokenId].history[marketHistory[_tokenId].count].to = msg.sender;
+            marketHistory[_tokenId].count++;
+        }
         for (uint256 i = indexNftInMarket+1; i < nbListedNft; i++){
             market[i-1] = market[i];
         }
@@ -187,7 +217,7 @@ contract CheeseCollection is ERC721URIStorage{
         }
         payable(market[indexNftInMarket].from).transfer(msg.value);
         _transfer(address(this), msg.sender, _tokenId);
-        deleteNftInMarket(_tokenId);
+        deleteNftInMarket(_tokenId, true);
         emit NftSold(_tokenId);
     }
 
@@ -233,6 +263,4 @@ contract CheeseCollection is ERC721URIStorage{
         }
         return history;
     }
-    
-    // function getFloorPrice();
 }
