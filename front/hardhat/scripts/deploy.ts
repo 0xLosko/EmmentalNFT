@@ -4,10 +4,10 @@ async function main() {
     const [deployer] = await ethers.getSigners();
     console.log("Deploying contracts with the account:", deployer.address);
 
-    const Emmental = await ethers.getContractFactory("EmmentalCollection");
-    const emmental = await Emmental.deploy();
+    const Factory = await ethers.getContractFactory("CheeseFactory");
+    const factory = await Factory.deploy();
 
-    console.log("Emmental deployed to:", emmental.address);
+    console.log("Factory deployed to:", factory.address);
 }
 
 main()

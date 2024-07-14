@@ -2,7 +2,7 @@ import { Button } from "../../components/ui/button"
 import {NextPageWithLayout} from "../_app"
 import Image from 'next/image'
 import { useAccount, useReadContract, type BaseError, useWriteContract, useWaitForTransactionReceipt } from "wagmi"
-import { contractAddress, contractAbi } from "../../constants"
+import { contractAddress, CollectionContractAbi } from "../../constants"
 
 const Mint: NextPageWithLayout = () => {
     const { address } = useAccount()
@@ -10,9 +10,9 @@ const Mint: NextPageWithLayout = () => {
     const mintNft = async() => {
         writeContract({
             address: contractAddress,
-            abi: contractAbi,
-            functionName: 'mint',
-            account: address
+            abi: CollectionContractAbi,
+            functionName: "mint",
+            account: address,
         });
     }
     if (airdropError) {
