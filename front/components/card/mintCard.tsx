@@ -51,12 +51,22 @@ const MintCard = ({ contractAdr }: { contractAdr: string }) => {
         functionName: 'getMaximumSupply',
     });
 
+    const {
+        data: nftUrl,
+        isLoading: nftUrlLoading,
+        refetch: refetchNftUrl,
+        error: nftUrlError,
+    } = useReadContract({
+        ...contractConfig,
+        functionName: 'getBaseUri',
+    });
+
     useEffect(() => {
         refetchName();
         refetchNbMint();
         refetchMaximumSupply();
+        refetchNftUrl();
     }, [contractAdr]);
-
     return (
         <Card className="w-full min-h-96 bg-cardBg border-0 hover:cursor-pointer opacity-85
             transition-opacity duration-300 hover:opacity-100 hover:shadow-lg">
@@ -66,7 +76,11 @@ const MintCard = ({ contractAdr }: { contractAdr: string }) => {
             </CardHeader>
             <CardContent className="h-[200px]">
                 <div className="flex justify-center h-full">
-                    <Image src="/ico/logo.svg" alt="Logo" height={100} width={100} />
+                    <Image src={nftUrl} alt="Logo"
+                           width={0}
+                           height={0}
+                           sizes="100vw"
+                           style={{ width: '300px', height: 'auto', borderRadius: '12px'}}/>
                 </div>
             </CardContent>
             <CardFooter className="flex justify-end">

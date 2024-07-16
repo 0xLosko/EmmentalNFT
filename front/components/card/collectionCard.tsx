@@ -46,17 +46,32 @@ const CollectionCard = ({ contractAdr }: { contractAdr: string }) => {
         functionName: 'getMaximumSupply',
     });
 
+    const {
+        data: nftUrl,
+        isLoading: nftUrlLoading,
+        refetch: refetchNftUrl,
+        error: nftUrlError,
+    } = useReadContract({
+        ...contractConfig,
+        functionName: 'getBaseUri',
+    });
+
     useEffect(() => {
         refetchName();
         refetchMaximumSupply();
-    }, []);
+        refetchNftUrl();
+    }, [contractAdr]);
     return (
         <Card className="w-full min-h-60 opacity-80 flex justify-center flex-col bg-cardBg border-0 hover:cursor-pointer
         transition-opacity duration-300 hover:opacity-100 hover:shadow-lg"
         onClick={() => router.push(`collection/${contractAdr}`)}>
             <CardContent className="mt-4">
                 <div className="flex justify-center h-full">
-                    <Image src="/ico/logo.svg" alt="Logo" height={100} width={100} />
+                    <Image src={nftUrl} alt="Logo"
+                           width={0}
+                           height={0}
+                           sizes="100vw"
+                           style={{ width: '200px', height: 'auto', borderRadius: '8px'}}/>
                 </div>
             </CardContent>
             <CardFooter className="flex justify-center flex-col">

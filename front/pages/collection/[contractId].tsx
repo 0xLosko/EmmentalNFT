@@ -1,30 +1,20 @@
-import { Button } from "../../components/ui/button"
-import {NextPageWithLayout} from "../_app"
-import Image from 'next/image'
-import { useAccount, useReadContract, type BaseError, useWriteContract, useWaitForTransactionReceipt } from "wagmi"
-import { CollectionContractAbi } from "../../constants"
-import {useRouter} from "next/router";
-import React, {useEffect} from "react";
-import {Progress} from "../../components/ui/progress";
+import { Button } from "../../components/ui/button";
+import { NextPageWithLayout } from "../_app";
+import Image from 'next/image';
+import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { CollectionContractAbi } from "../../constants";
+import { useRouter } from "next/router";
+import React, { useEffect } from "react";
 
-const Mint: NextPageWithLayout = () => {
-    const { address } = useAccount()
-    const { data: hash, error: mintError, isPending, writeContract } = useWriteContract()
-    const router = useRouter()
+const CollectionPage: NextPageWithLayout = () => {
+    const { address } = useAccount();
+    const router = useRouter();
 
     const contractConfig = {
-        address: router.query.contractId,
+        address: router.query.contractId as string,
         abi: CollectionContractAbi,
     };
 
-    const mintNft = async() => {
-        writeContract({
-            address: router.query.contractId,
-            abi: CollectionContractAbi,
-            functionName: "mint",
-            account: address,
-        });
-    }
     const {
         data: name,
         isLoading: nameLoading,
@@ -33,16 +23,6 @@ const Mint: NextPageWithLayout = () => {
     } = useReadContract({
         ...contractConfig,
         functionName: 'name',
-    });
-
-    const {
-        data: nbMint,
-        isLoading: nbMintLoading,
-        refetch: refetchNbMint,
-        error: nbMintError,
-    } = useReadContract({
-        ...contractConfig,
-        functionName: 'getNbMint',
     });
 
     const {
@@ -55,46 +35,45 @@ const Mint: NextPageWithLayout = () => {
         functionName: 'getMaximumSupply',
     });
 
+    const {
+        data: nftUrl,
+        isLoading: nftUrlLoading,
+        refetch: refetchNftUrl,
+        error: nftUrlError,
+    } = useReadContract({
+        ...contractConfig,
+        functionName: 'getBaseUri',
+    });
+
     useEffect(() => {
         refetchName();
-        refetchNbMint();
         refetchMaximumSupply();
-    }, [nbMint]);
+        refetchNftUrl;
+    }, [refetchName, refetchMaximumSupply]);
 
-    if (mintError) {
-        return <div>Erreur lors de la tentative de mint: {mintError.message}</div>;
-    }
     return (
-        <div className="flex items-center justify-center gap-9 min-h[500px] mb-16">
-            <div className="flex justify-center items-center bg-amber-400 rounded-2xl">
-                <Image
-                    src="/ico/ex_nft.png"
-                    width={400}
-                    height={400}
-                    className="rounded-2xl"
-                    alt="NFT Template" //get url nft
-                />
+        <div className="container mx-auto px-4">
+            <div className="banner relative w-full h-64 bg-gray-200 rounded-t-lg">
+                <Image src="/ico/bg-fro.jpg" alt="Banner Image" layout="fill" objectFit="cover" className="rounded-t-lg" />
             </div>
-            <div className="flex justify-center flex-col min-h-[500px] p-3 max-w-[50%]">
-                <h1 className="text-4xl w-fit">{name}</h1>
-                <h3 className="m-w-4/5 mt-9">
-                    ******Rajouter champs description dans le nft ******ry's standard dummy text ever since the 1500s,
-                    when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                    It has survived not only five centuries, but also the leap into electronic typesetting,
-                    remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-                    sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like
-                    Aldus PageMaker including versions of Lorem Ipsum.
-                </h3>
-                <div className="flex flex-row items-center justify-center bg-cardBg h-14 mt-9 rounded-xl p-3">
-                    <div className="w-3/4 flex flex-col items-center justify-center">
-                        <p className="text-white text-lg">{`${nbMint} / ${maximumSupply}`}</p>
-                        <Progress value={Number(nbMint) / Number(maximumSupply) * 100}/>
-                    </div>
-                    <Button className="ml-auto bg-customYellow/80 hover:bg-customYellow" onClick={() => mintNft()}>Mint</Button>
+            <div className="flex flex-col items-center ">
+                <div className="relative w-36 h-36 -mt-12 border-4 border-white/30 rounded-full overflow-hidden">
+                    <Image src={nftUrl} alt="Collection Logo" layout="fill" objectFit="cover" />
                 </div>
+                <h1 className="text-4xl font-bold mt-4">{nameLoading ? "Loading..." : name}</h1>
+                <p className="text-gray-500 mt-2">Supply: {maximumSupplyLoading ? "Loading..." : Number(maximumSupply)}</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-8">
+                {/* Here you can map through your NFT items and render them */}
+                <div className="nft-item border p-4 rounded-lg">
+                    <Image src="/path/to/nft.jpg" alt="NFT Item" width={200} height={200} />
+                    <h2 className="mt-2 font-bold">NFT Title</h2>
+                    <p className="text-gray-500">Price: 0.1 ETH</p>
+                </div>
+                {/* Repeat for other NFT items */}
             </div>
         </div>
-    )
+    );
 };
 
-export default Mint;
+export default CollectionPage;

@@ -6,6 +6,7 @@ import { CollectionContractAbi } from "../../constants"
 import {useRouter} from "next/router";
 import React, {useEffect} from "react";
 import {Progress} from "../../components/ui/progress";
+import contractId from "../collection/[contractId]";
 
 const Mint: NextPageWithLayout = () => {
     const { address } = useAccount()
@@ -55,11 +56,21 @@ const Mint: NextPageWithLayout = () => {
         functionName: 'getMaximumSupply',
     });
 
+    const {
+        data: nftUrl,
+        isLoading: nftUrlLoading,
+        refetch: refetchNftUrl,
+        error: nftUrlError,
+    } = useReadContract({
+        ...contractConfig,
+        functionName: 'getBaseUri',
+    });
+
     useEffect(() => {
         refetchName();
-        refetchNbMint();
         refetchMaximumSupply();
-    }, [nbMint]);
+        refetchNftUrl();
+    }, [contractId]);
 
     if (mintError) {
         return <div>Erreur lors de la tentative de mint: {mintError.message}</div>;
@@ -67,13 +78,11 @@ const Mint: NextPageWithLayout = () => {
     return (
         <div className="flex items-center justify-center gap-9 min-h[500px] mb-16">
             <div className="flex justify-center items-center bg-amber-400 rounded-2xl">
-                <Image
-                    src="/ico/ex_nft.png"
-                    width={400}
-                    height={400}
-                    className="rounded-2xl"
-                    alt="NFT Template" //get url nft
-                />
+                <Image src={nftUrl} alt="Logo"
+                       width={0}
+                       height={0}
+                       sizes="100vw"
+                       style={{ width: '400px', height: 'auto', borderRadius: '12px'}}/>
             </div>
             <div className="flex justify-center flex-col min-h-[500px] p-3 max-w-[50%]">
                 <h1 className="text-4xl w-fit">{name}</h1>

@@ -244,6 +244,10 @@ contract CheeseCollection is ERC721URIStorage{
         return maximumSupply;
     }
 
+    function getBaseUri() public view returns (string memory){
+        return baseURI;
+    }
+
     function getNftIdForWallet() public view returns (uint256[] memory) {
         uint256[] memory rt = new uint256[](balanceOf(msg.sender)); //override si nft listé le balance of sinon on perds l'info du nft listé
         uint256 j = 0;
