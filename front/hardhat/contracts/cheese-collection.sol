@@ -139,7 +139,7 @@ contract CheeseCollection is ERC721URIStorage{
 
     function mint() public {
         // Maximum supply limit if disabled if equal to 0
-        if (maximumSupply > 0 && indexMint == maximumSupply-1){
+        if (maximumSupply > 0 && indexMint == maximumSupply){
             revert MAXIMUM_SUPPLY_REACHED(maximumSupply);
         }
         // Mint

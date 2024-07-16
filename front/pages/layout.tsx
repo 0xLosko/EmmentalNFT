@@ -12,7 +12,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     return (
         <>
             <Navbar/>
-            <SubNavbar/>
             <div className="mx-[10%] min-h-[40vh]">
                 {children}
             </div>

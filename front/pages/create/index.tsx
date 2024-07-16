@@ -167,7 +167,7 @@ function ProfileForm() {
                         )}
                     />
                     <div className="flex justify-center">
-                        <Button className="w-1/4" type="submit">Submit</Button>
+                        <Button className="w-1/4 bg-customYellow/80 hover:bg-customYellow" type="submit">Submit</Button>
                     </div>
                 </div>
             </form>
