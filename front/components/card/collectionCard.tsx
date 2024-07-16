@@ -1,61 +1,70 @@
-import React, { useEffect } from "react";
-import { useReadContract } from "wagmi";
-import { CollectionContractAbi } from "../../constants";
-import { BusyBox } from "../ui/busy-box";
-import Card from "../ui/card";
-
+"use client"
+import React, { useEffect } from 'react';
+import Image from 'next/image';
+import { Button } from '../ui/button';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from '../ui/card';
+import { Progress } from '../ui/progress';
+import { CollectionContractAbi } from '../../constants';
+import { useReadContract } from 'wagmi';
+import {useRouter} from "next/router";
 export enum FilterType {
     ALL,
-    MARKET,
-    OWNED,
+    MINTABLE,
 }
 
-export default function CollectionCard({
-    address,
-    filter,
-}: {
-    address: `0x${string}`;
-    filter: FilterType;
-}) {
+const CollectionCard = ({ contractAdr }: { contractAdr: string }) => {
+    const router = useRouter();
     const contractConfig = {
-        address: address,
+        address: contractAdr,
         abi: CollectionContractAbi,
     };
+
     const {
-        data: NbMint,
-        isLoading: NbMintLoading,
-        refetch: refetchNbMint,
-        error: err,
+        data: name,
+        isLoading: nameLoading,
+        refetch: refetchName,
+        error: nameError,
     } = useReadContract({
         ...contractConfig,
-        functionName: "getNbMint",
+        functionName: 'name',
     });
 
     const {
         data: maximumSupply,
         isLoading: maximumSupplyLoading,
         refetch: refetchMaximumSupply,
+        error: maximumSupplyError,
     } = useReadContract({
         ...contractConfig,
-        functionName: "getMaximumSupply",
-    });
-
-    const {
-        data: name,
-        isLoading: nameLoading,
-        refetch: refetchName,
-    } = useReadContract({
-        ...contractConfig,
-        functionName: "name",
+        functionName: 'getMaximumSupply',
     });
 
     useEffect(() => {
-        refetchNbMint();
-        refetchMaximumSupply();
         refetchName();
-    }, [NbMint, maximumSupply, name]);
-
+        refetchMaximumSupply();
+    }, []);
     return (
-        <></>
+        <Card className="w-full min-h-60 opacity-80 flex justify-center flex-col bg-cardBg border-0 hover:cursor-pointer
+        transition-opacity duration-300 hover:opacity-100 hover:shadow-lg"
+        onClick={() => router.push(`collection/${contractAdr}`)}>
+            <CardContent className="mt-4">
+                <div className="flex justify-center h-full">
+                    <Image src="/ico/logo.svg" alt="Logo" height={100} width={100} />
+                </div>
+            </CardContent>
+            <CardFooter className="flex justify-center flex-col">
+                <h2 className="text-xl text-gray-200 font-bold">{name}</h2>
+                <p className="text-customYellow text-sm">Max Supply {Number(maximumSupply)}</p>
+            </CardFooter>
+        </Card>
     );
-}
+};
+
+export default CollectionCard;

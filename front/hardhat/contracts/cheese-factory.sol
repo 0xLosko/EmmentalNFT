@@ -65,7 +65,7 @@ contract CheeseFactory{
 
     enum FilterType{
       ALL,
-      MARKET,
+      MINTABLE,
       OWNED
     }
 
@@ -122,17 +122,32 @@ contract CheeseFactory{
        revert COLLECTION_NOT_FOUND(name);
      }
 
-     function getCollections(FilterType filter) external view returns(CheeseCollection[] memory){
-        CheeseCollection[] memory _collections = new CheeseCollection[](nbListedCollection);
-       for (uint256 i=0; i < nbListedCollection; i++) {
-        if (filter == FilterType.MARKET && collections[i].getMarketSize() > 0){
-          _collections[i] = collections[i];
-        }else if (filter == FilterType.OWNED && collections[i].balanceOf(msg.sender) > 0){
-          _collections[i] = collections[i];
-        }else if (filter == FilterType.ALL ){
-          _collections[i] = collections[i];
+    function getCollections(FilterType filter) external view returns (CheeseCollection[] memory) {
+        if(filter == FilterType.MINTABLE) {
+            uint256 count = 0;
+            for (uint256 i = 0; i < nbListedCollection; i++) {
+                if (filter == FilterType.MINTABLE && collections[i].getMaximumSupply() > collections[i].getNbMint()) {
+                    count++;
+                }
+            }
+            CheeseCollection[] memory _collections = new CheeseCollection[](count);
+
+            uint256 index = 0;
+
+            for (uint256 i = 0; i < nbListedCollection; i++) {
+                if (filter == FilterType.MINTABLE && collections[i].getMaximumSupply() > collections[i].getNbMint()) {
+                    _collections[index] = collections[i];
+                    index++;
+                }
+            }
+            return _collections;
         }
-       }
-       return _collections;
-     }
+        else {
+            CheeseCollection[] memory _collections = new CheeseCollection[](nbListedCollection);
+            for (uint256 i = 0; i < nbListedCollection; i++) {
+                _collections[i] = collections[i];
+            }
+            return _collections;
+        }
+    }
 }

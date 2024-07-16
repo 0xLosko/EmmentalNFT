@@ -58,7 +58,8 @@ const MintCard = ({ contractAdr }: { contractAdr: string }) => {
     }, [contractAdr]);
 
     return (
-        <Card className="w-full min-h-96 bg-cardBg border-0">
+        <Card className="w-full min-h-96 bg-cardBg border-0 hover:cursor-pointer opacity-85
+            transition-opacity duration-300 hover:opacity-100 hover:shadow-lg">
             <CardHeader>
                 <CardTitle className="text-3xl text-gray-200">{name}</CardTitle>
                 <CardDescription className="text-xl">Rajouter un champs description dans le sc</CardDescription>
