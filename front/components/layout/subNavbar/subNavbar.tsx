@@ -7,6 +7,7 @@ const SubNavbar = () => {
             <Link href="/">Discover</Link>
             <Link href="/mint">Mint</Link>
             <Link href="/profil">My Profile</Link>
+            <Link href="/create">Create new collection !</Link>
         </div>
     )
 }
