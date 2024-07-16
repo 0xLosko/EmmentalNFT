@@ -22,6 +22,8 @@ import {
     SelectValue,
 } from "../../components/ui/select"
 import { Input } from "../../components/ui/input"
+import { useAccount, useWriteContract } from "wagmi";
+import { contractAddress, FactoryContractAbi } from "../../constants";
 
 const formSchema = z.object({
     name: z.string().min(4, {
@@ -38,12 +40,35 @@ const formSchema = z.object({
 })
 
 function ProfileForm() {
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema)
-    })
+    const account = useAccount();
+    const { data: hash, writeContract } = useWriteContract()
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log(values)
+    const form = useForm({
+        resolver: zodResolver(formSchema)
+    });
+
+    async function onSubmit(values) {
+        if (account.isConnected) {
+            try {
+                const result = writeContract({
+                    address: contractAddress,
+                    abi: FactoryContractAbi,
+                    functionName: 'createCollection',
+                    args: [
+                        values.name,
+                        values.symbol,
+                        values.agingMethod,
+                        values.maximumSupply,
+                        values.imageUrl
+                    ],
+                });
+                console.log('Transaction result:', result);
+            } catch (error) {
+                console.error('Transaction error:', error);
+            }
+        } else {
+            console.error('Account is not connected');
+        }
     }
 
     return (
@@ -147,7 +172,7 @@ function ProfileForm() {
                 </div>
             </form>
         </Form>
-    )
+    );
 }
 
-export default ProfileForm
+export default ProfileForm;
