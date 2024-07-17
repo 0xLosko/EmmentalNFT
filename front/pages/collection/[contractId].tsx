@@ -45,33 +45,72 @@ const CollectionPage: NextPageWithLayout = () => {
         functionName: 'getBaseUri',
     });
 
+    const {
+        data: nftListed,
+        isLoading: nftListedLoading,
+        refetch: refetchNftListed,
+        error: nftListedError,
+    } = useReadContract({
+        ...contractConfig,
+        functionName: 'getAllNftInMarket',
+    });
+
     useEffect(() => {
         refetchName();
         refetchMaximumSupply();
-        refetchNftUrl;
-    }, [refetchName, refetchMaximumSupply]);
+        refetchNftUrl();
+        refetchNftListed();
+    }, [refetchName, refetchMaximumSupply, refetchNftUrl, refetchNftListed]);
+
+    const isNftListed = (tokenId: number) => {
+        return nftListed?.some((nft: { tokenId: number }) => nft.tokenId === tokenId);
+    };
+
+    const getNftPrice = (tokenId: number) => {
+        const nft = nftListed?.find((nft: { tokenId: number }) => nft.tokenId === tokenId);
+        return nft?.price;
+    };
 
     return (
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 overflow-hidden">
             <div className="banner relative w-full h-64 bg-gray-200 rounded-t-lg">
                 <Image src="/ico/bg-fro.jpg" alt="Banner Image" layout="fill" objectFit="cover" className="rounded-t-lg" />
             </div>
-            <div className="flex flex-col items-center ">
+            <div className="flex flex-col items-center">
                 <div className="relative w-36 h-36 -mt-12 border-4 border-white/30 rounded-full overflow-hidden">
                     <Image src={nftUrl} alt="Collection Logo" layout="fill" objectFit="cover" />
                 </div>
                 <h1 className="text-4xl font-bold mt-4">{nameLoading ? "Loading..." : name}</h1>
                 <p className="text-gray-500 mt-2">Supply: {maximumSupplyLoading ? "Loading..." : Number(maximumSupply)}</p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-8">
-                {/* Here you can map through your NFT items and render them */}
-                <div className="nft-item border p-4 rounded-lg">
-                    <Image src="/path/to/nft.jpg" alt="NFT Item" width={200} height={200} />
-                    <h2 className="mt-2 font-bold">NFT Title</h2>
-                    <p className="text-gray-500">Price: 0.1 ETH</p>
-                </div>
-                {/* Repeat for other NFT items */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 overflow-y-scroll max-h-[70vh] hide-scrollbar">
+                {maximumSupply > 0 && Array.from({ length: Number(maximumSupply) }, (_, index) => (
+                    <div className="nft-item p-4 rounded-lg bg-cardBg" key={index}>
+                        <Image src={nftUrl}
+                               alt={"nft it"}
+                               width={0}
+                               height={0}
+                               sizes="100vw"
+                               style={{ width: '300px', height: 'auto', borderRadius: '12px'}}/>
+                        <h2 className="py-2 font-bold min-h-24 flex">{name + " #" + (index) }</h2>
+                        {isNftListed(index) && (
+                            <>
+                                <p className="text-gray-500">Listed, Price: {getNftPrice(index)} ETH</p>
+                                <Button>Buy now</Button>
+                            </>
+                        )}
+                    </div>
+                ))}
             </div>
+            <style jsx>{`
+                .hide-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .hide-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+            `}</style>
         </div>
     );
 };
