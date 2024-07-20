@@ -11,8 +11,8 @@ import {
     CardTitle,
 } from '../ui/card';
 import { Progress } from '../ui/progress';
-import { CollectionContractAbi } from '../../constants';
-import { useReadContract } from 'wagmi';
+import {CollectionContractAbi, contractAddress} from '../../constants';
+import {useAccount, useReadContract} from 'wagmi';
 import {useRouter} from "next/router";
 import { Address } from '../../types/solidity-native';
 export enum FilterType {
@@ -22,10 +22,12 @@ export enum FilterType {
 
 const CollectionCard = ({ contractAdr }: { contractAdr: Address }) => {
     const router = useRouter();
+    const adr = useAccount();
     const contractConfig = {
         address: contractAdr,
         abi: CollectionContractAbi,
     };
+
 
     const {
         data: name,

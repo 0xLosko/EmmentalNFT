@@ -9,7 +9,6 @@ import {Address} from "../../types/solidity-native";
 const Profil: NextPageWithLayout = () => {
     const { address } = useAccount();
     const [nft, setNft] = useState<number[]>([]);
-
     const {
         data: collectionList,
         isLoading: collectionListLoading,
@@ -40,14 +39,14 @@ const Profil: NextPageWithLayout = () => {
             ))}
 
             {(collectionList as []).length > 0 ? (
-                <div className="flex gap-y-9 flex-col">
-                    {(collectionList as Address[]).map((item, index) => (
-                        <div className="gap-5 grid grid-cols-2 sm:grid-cols-4">
-                            <ProfilCard contractAdr={item.toString() as Address} />
-                        </div>
-                    ))}
-                </div>
-            )
+                    <div className="flex gap-y-9 flex-col">
+                        {(collectionList as Address[]).map((item, index) => (
+                            <div className="gap-5 grid grid-cols-2 sm:grid-cols-4">
+                                <ProfilCard contractAdr={item.toString() as Address} />
+                            </div>
+                        ))}
+                    </div>
+                )
                 :
                 "pas de nft"
             }
