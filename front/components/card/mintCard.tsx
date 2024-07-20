@@ -13,8 +13,9 @@ import { Progress } from '../ui/progress';
 import { CollectionContractAbi } from '../../constants';
 import { useReadContract } from 'wagmi';
 import {useRouter} from "next/router";
+import { Address } from '../../types/solidity-native';
 
-const MintCard = ({ contractAdr }: { contractAdr: string }) => {
+const MintCard = ({ contractAdr }: { contractAdr: Address }) => {
     const router = useRouter();
     const contractConfig = {
         address: contractAdr,
@@ -68,28 +69,50 @@ const MintCard = ({ contractAdr }: { contractAdr: string }) => {
         refetchNftUrl();
     }, [contractAdr]);
     return (
-        <Card className="w-full min-h-96 bg-cardBg border-0 hover:cursor-pointer opacity-85
-            transition-opacity duration-300 hover:opacity-100 hover:shadow-lg">
+        <Card
+            className="w-full min-h-96 bg-cardBg border-0 hover:cursor-pointer opacity-85
+            transition-opacity duration-300 hover:opacity-100 hover:shadow-lg"
+        >
             <CardHeader>
-                <CardTitle className="text-3xl text-gray-200">{name}</CardTitle>
-                <CardDescription className="text-xl">Rajouter un champs description dans le sc</CardDescription>
+                <CardTitle className="text-3xl text-gray-200">
+                    {name as string}
+                </CardTitle>
+                <CardDescription className="text-xl">
+                    Rajouter un champs description dans le sc
+                </CardDescription>
             </CardHeader>
             <CardContent className="h-[200px]">
                 <div className="flex justify-center h-full">
-                    <Image src={nftUrl} alt="Logo"
-                           width={0}
-                           height={0}
-                           sizes="100vw"
-                           style={{ width: '300px', height: 'auto', borderRadius: '12px'}}/>
+                    <Image
+                        src={nftUrl as string}
+                        alt="Logo"
+                        width={0}
+                        height={0}
+                        sizes="100vw"
+                        style={{
+                            width: "300px",
+                            height: "auto",
+                            borderRadius: "12px",
+                        }}
+                    />
                 </div>
             </CardContent>
             <CardFooter className="flex justify-end">
                 <div className="flex flex-row w-1/6 items-center gap-3">
                     <div className="w-full">
                         <p className="text-customYellow">{`${nbMint} / ${maximumSupply}`}</p>
-                        <Progress value={Number(nbMint) / Number(maximumSupply) * 100} />
+                        <Progress
+                            value={
+                                (Number(nbMint) / Number(maximumSupply)) * 100
+                            }
+                        />
                     </div>
-                    <Button className="bg-customYellow/80 hover:bg-customYellow" onClick={() => router.push(`mint/${contractAdr}`)}>Mint</Button>
+                    <Button
+                        className="bg-customYellow/80 hover:bg-customYellow"
+                        onClick={() => router.push(`mint/${contractAdr}`)}
+                    >
+                        Mint
+                    </Button>
                 </div>
             </CardFooter>
         </Card>

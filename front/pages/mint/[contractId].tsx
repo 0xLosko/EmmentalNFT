@@ -7,6 +7,7 @@ import {useRouter} from "next/router";
 import React, {useEffect} from "react";
 import {Progress} from "../../components/ui/progress";
 import contractId from "../collection/[contractId]";
+import { Address } from "../../types/solidity-native"
 
 const Mint: NextPageWithLayout = () => {
     const { address } = useAccount()
@@ -14,14 +15,13 @@ const Mint: NextPageWithLayout = () => {
     const router = useRouter()
 
     const contractConfig = {
-        address: router.query.contractId,
+        address: router.query.contractId as Address,
         abi: CollectionContractAbi,
     };
 
     const mintNft = async() => {
         writeContract({
-            address: router.query.contractId,
-            abi: CollectionContractAbi,
+            ...contractConfig,
             functionName: "mint",
             account: address,
         });
@@ -78,14 +78,14 @@ const Mint: NextPageWithLayout = () => {
     return (
         <div className="flex items-center justify-center gap-9 min-h[500px] mb-16">
             <div className="flex justify-center items-center bg-amber-400 rounded-2xl">
-                <Image src={nftUrl} alt="Logo"
+                <Image src={nftUrl as string} alt="Logo"
                        width={0}
                        height={0}
                        sizes="100vw"
                        style={{ width: '400px', height: 'auto', borderRadius: '12px'}}/>
             </div>
             <div className="flex justify-center flex-col min-h-[500px] p-3 max-w-[50%]">
-                <h1 className="text-4xl w-fit">{name}</h1>
+                <h1 className="text-4xl w-fit">{name as string}</h1>
                 <h3 className="m-w-4/5 mt-9">
                     ******Rajouter champs description dans le nft ******ry's standard dummy text ever since the 1500s,
                     when an unknown printer took a galley of type and scrambled it to make a type specimen book.

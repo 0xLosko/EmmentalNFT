@@ -14,12 +14,13 @@ import { Progress } from '../ui/progress';
 import { CollectionContractAbi } from '../../constants';
 import { useReadContract } from 'wagmi';
 import {useRouter} from "next/router";
+import { Address } from '../../types/solidity-native';
 export enum FilterType {
     ALL,
     MINTABLE,
 }
 
-const CollectionCard = ({ contractAdr }: { contractAdr: string }) => {
+const CollectionCard = ({ contractAdr }: { contractAdr: Address }) => {
     const router = useRouter();
     const contractConfig = {
         address: contractAdr,
@@ -67,7 +68,7 @@ const CollectionCard = ({ contractAdr }: { contractAdr: string }) => {
         onClick={() => router.push(`collection/${contractAdr}`)}>
             <CardContent className="mt-4">
                 <div className="flex justify-center h-full">
-                    <Image src={nftUrl} alt="Logo"
+                    <Image src={nftUrl as string} alt="Logo"
                            width={0}
                            height={0}
                            sizes="100vw"
@@ -75,7 +76,7 @@ const CollectionCard = ({ contractAdr }: { contractAdr: string }) => {
                 </div>
             </CardContent>
             <CardFooter className="flex justify-center flex-col">
-                <h2 className="text-xl text-gray-200 font-bold">{name}</h2>
+                <h2 className="text-xl text-gray-200 font-bold">{name as string}</h2>
                 <p className="text-customYellow text-sm">Max Supply {Number(maximumSupply)}</p>
             </CardFooter>
         </Card>

@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { FieldValues, useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { Button } from "../../components/ui/button"
@@ -47,27 +47,27 @@ function ProfileForm() {
         resolver: zodResolver(formSchema)
     });
 
-    async function onSubmit(values) {
+    async function onSubmit(values: FieldValues) {
         if (account.isConnected) {
             try {
                 const result = writeContract({
                     address: contractAddress,
                     abi: FactoryContractAbi,
-                    functionName: 'createCollection',
+                    functionName: "createCollection",
                     args: [
                         values.name,
                         values.symbol,
                         values.agingMethod,
                         values.maximumSupply,
-                        values.imageUrl
+                        values.imageUrl,
                     ],
                 });
-                console.log('Transaction result:', result);
+                console.log("Transaction result:", result);
             } catch (error) {
-                console.error('Transaction error:', error);
+                console.error("Transaction error:", error);
             }
         } else {
-            console.error('Account is not connected');
+            console.error("Account is not connected");
         }
     }
 

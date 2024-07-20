@@ -152,6 +152,10 @@ contract CheeseCollection is ERC721URIStorage{
         emit NftMinted(indexMint-1, msg.sender);
     }
 
+    function getNftMetaDataById(uint256 _tokenId) public view returns (CheeseBaseProperties memory){
+        return cheeseProperties[_tokenId];
+    }
+
     function isListed(uint256 _tokenId) public view returns (bool) {
         for (uint i = 0; i < nbListedNft; i++) {
             if (market[i].tokenId == _tokenId) {
@@ -181,6 +185,10 @@ contract CheeseCollection is ERC721URIStorage{
             }
         }
         revert("Nft not listed in market");
+    }
+
+    function getNftInMarket(uint _tokenId) public view returns (Listed memory) {
+        return market[getIdForNftInMarket(_tokenId)];
     }
 
     function unListNft(uint256 _tokenId) public {

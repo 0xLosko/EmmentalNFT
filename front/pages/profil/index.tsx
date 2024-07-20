@@ -41,8 +41,8 @@ const Profil: NextPageWithLayout = () => {
     return (
         <div className="flex gap-3">
             {nft.map((tokenId, index) => (
-                <div key={index} className="flex flex-col w-[350px] h-[350px] bg-amber-400 rounded-3xl flex justify-center items-center">
-                    <Image src="ico/logo.svg" alt="" height={100} width={100}/>
+                <div key={index} className="flex flex-col w-[350px] h-[350px] bg-amber-400 rounded-3xl justify-center items-center">
+                    <Image src="/ico/logo.svg" alt="" height={100} width={100}/>
                     <h2>#{tokenId}</h2>
                 </div>
             ))}

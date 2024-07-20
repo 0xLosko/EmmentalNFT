@@ -5,7 +5,7 @@ const Footer = () => {
         <section className="flex justify-evenly my-16  mx-16 max-sm:flex-col max-sm:my-4 max-sm:mx-0">
             <div className="max-sm:w-screen max-sm:flex max-sm:items-center max-sm:justify-evenly">
                 <div className="flex flex-row items-center">
-                    <a href="/"><img className="rounded-lg cursor-pointer w-12 h-12" src="ico/logo.svg"/></a>
+                    <a href="/"><img className="rounded-lg cursor-pointer w-12 h-12" src="/ico/logo.svg"/></a>
                     <h3 className="ml-2">EmmentalNFT</h3>
                 </div>
                 <div>
