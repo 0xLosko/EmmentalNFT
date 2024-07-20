@@ -1,21 +1,11 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { Button } from '../ui/button';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '../ui/card';
-import { Progress } from '../ui/progress';
 import { CollectionContractAbi } from '../../constants';
 import { useAccount, useReadContract } from 'wagmi';
 import { useRouter } from "next/router";
 import { Address } from '../../types/solidity-native';
-import { BuyButton } from "../button/buyButton";
+import { ethers } from 'ethers';
 
 export enum FilterType {
     ALL,
@@ -25,6 +15,7 @@ export enum FilterType {
 const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
     const router = useRouter();
     const account = useAccount();
+    const [filteredTokenIds, setFilteredTokenIds] = useState<number[]>([]);
     const contractConfig = {
         address: contractAdr,
         abi: CollectionContractAbi,
@@ -38,6 +29,15 @@ const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
     } = useReadContract({
         ...contractConfig,
         functionName: 'name',
+    });
+    const {
+        data: getAllNftInMarket,
+        isLoading: getAllNftInMarketLoading,
+        refetch: getAllNftInMarketRefetch,
+        error: getAllNftInMarketError,
+    } = useReadContract({
+        ...contractConfig,
+        functionName: "getAllNftInMarket",
     });
 
     const {
@@ -65,41 +65,63 @@ const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
         refetchName();
         refetchNftUrl();
         getNftIdForWalletRefetch();
+        getAllNftInMarketRefetch();
     }, [contractAdr]);
 
-    if (nftUrlLoading || getNftIdForWalletLoading || nameLoading) {
+    useEffect(() => {
+        if (getAllNftInMarket && account.address) {
+            const filtered = getAllNftInMarket
+                .filter(nft => nft.from === account.address)
+                .map(nft => nft.tokenId);
+            setFilteredTokenIds(filtered);
+        }
+    }, [getAllNftInMarket, account.address]);
+
+    if (nftUrlLoading || getNftIdForWalletLoading || nameLoading || getAllNftInMarketLoading) {
         return "loading";
     }
 
+    const combinedTokenIds = [...nftIdForWallet, ...filteredTokenIds].sort();
+
     return (
         <>
-            {nftIdForWallet && (nftIdForWallet as []).length > 0 ? (
-                (nftIdForWallet as []).map((id: number) => (
-                    <div
-                        className="nft-item p-4 rounded-lg bg-cardBg cursor-pointer"
-                        key={id}
-                        onClick={() => {
-                            router.push( './collection/' + contractAdr + '/' + id);
-                        }}
-                    >
-                        <Image
-                            src={nftUrl as string}
-                            alt={`NFT ${id}`}
-                            width={300}
-                            height={300}
-                            sizes="100vw"
-                            style={{
-                                width: "300px",
-                                height: "auto",
-                                borderRadius: "12px",
+            {combinedTokenIds.length > 0 ? (
+                combinedTokenIds.map((id: number) => {
+                    const nft = getAllNftInMarket.find(nft => nft.tokenId === id && nft.from === account.address);
+                    const isListed = !  !nft;
+                    const price = isListed ? Number(ethers.utils.formatEther(nft.price)) : null;
+
+                    return (
+                        <div
+                            className="nft-item p-4 rounded-lg bg-cardBg cursor-pointer"
+                            key={id}
+                            onClick={() => {
+                                router.push('./collection/' + contractAdr + '/' + id);
                             }}
-                        />
-                        <h2 className="py-2 font-bold min-h-24 flex">
-                            {name + " #" + id}
-                        </h2>
-                    </div>
-                ))
-            ) : ( ''
+                        >
+                            <Image
+                                src={nftUrl as string}
+                                alt={`NFT ${id}`}
+                                width={300}
+                                height={300}
+                                sizes="100vw"
+                                style={{
+                                    width: "300px",
+                                    height: "auto",
+                                    borderRadius: "12px",
+                                }}
+                            />
+                            <h2 className="py-2 font-bold min-h-24 flex">
+                                {name + " #" + id}
+                            </h2>
+                            <h3>
+                                {isListed && `Listed ${price} ETH`}
+                            </h3>
+                        </div>
+                    );
+                })
+            ) : (
+                ''
             )}
         </>
     );
