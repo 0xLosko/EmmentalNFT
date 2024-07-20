@@ -48,7 +48,7 @@ const Profil: NextPageWithLayout = () => {
                     </div>
                 )
                 :
-                "pas de nft"
+                ""
             }
         </div>
     );
