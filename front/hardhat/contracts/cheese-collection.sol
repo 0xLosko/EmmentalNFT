@@ -73,6 +73,10 @@ contract CheeseCollection is ERC721URIStorage{
      */
     string public baseURI;
     /**
+     * Description of the NFT Collection
+     */
+    string public description;
+    /**
      * Aging method for this cheese family
      */
     Aging agingMethod;
@@ -130,11 +134,12 @@ contract CheeseCollection is ERC721URIStorage{
     //                        Implementation
     // =============================================================
 
-    constructor(string memory name, string memory symbol, Aging _agingMethod, uint256 _maximumSupply, string memory baseURI_) ERC721(name, symbol) {
+    constructor(string memory name, string memory symbol, Aging _agingMethod, uint256 _maximumSupply, string memory baseURI_, string memory _description) ERC721(name, symbol) {
         // The collection name is the cheese family
         baseURI = baseURI_;// Should hit the collection picture eg. {www.ipfs.com/}
         maximumSupply = _maximumSupply;// 0 for unlimited
         agingMethod = _agingMethod;
+        description = _description;
         }
 
     function mint() public {

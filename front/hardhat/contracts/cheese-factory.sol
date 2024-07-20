@@ -79,13 +79,13 @@ contract CheeseFactory{
     //                   FACTORY IMPLEMENTATION
     // =============================================================
 
-     function createCollection(string memory name, string memory symbol, CheeseCollection.Aging _agingMethod, uint256 maximumSupply, string memory baseURI_ ) external{
+     function createCollection(string memory name, string memory symbol, CheeseCollection.Aging _agingMethod, uint256 maximumSupply, string memory baseURI_, string memory desc ) external{
         if (isNameExists(name)){
             revert COLLECTION_NAME_ALREADY_EXISTS(name);
         }else if(isSymbolExists(symbol)){
             revert COLLECTION_SYMBOL_ALREADY_EXISTS(symbol);
         }
-       CheeseCollection collection = new CheeseCollection(name, symbol,_agingMethod, maximumSupply, baseURI_);// index
+       CheeseCollection collection = new CheeseCollection(name, symbol,_agingMethod, maximumSupply, baseURI_, desc);// index
        collections.push(collection);
        nbListedCollection++;
        emit CollectionCreated(address(collection), name, symbol);

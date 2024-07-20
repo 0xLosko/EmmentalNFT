@@ -32,6 +32,9 @@ const formSchema = z.object({
     symbol: z.string().min(3, {
         message: "Symbol must be at least 3 characters.",
     }),
+    desc: z.string().min(30, {
+        message: "Symbol must be at least 30 characters.",
+    }),
     agingMethod: z.string(),
     maximumSupply: z.number().max(10000, {
         message: "The maximum supply cannot exceed 10,000",
@@ -60,6 +63,7 @@ function ProfileForm() {
                         values.agingMethod,
                         values.maximumSupply,
                         values.imageUrl,
+                        values.desc,
                     ],
                 });
                 console.log("Transaction result:", result);
@@ -109,6 +113,22 @@ function ProfileForm() {
                     />
                     <FormField
                         control={form.control}
+                        name="desc"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Symbol</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="description" {...field} />
+                                </FormControl>
+                                <FormDescription>
+                                    This is the description of the collection.
+                                </FormDescription>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="agingMethod"
                         render={({ field }) => (
                             <FormItem>
@@ -120,9 +140,12 @@ function ProfileForm() {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        <SelectItem value="0">enum1</SelectItem>
-                                        <SelectItem value="1">enum2</SelectItem>
-                                        <SelectItem value="2">enum3</SelectItem>
+                                        <SelectItem value="0">cave</SelectItem>
+                                        <SelectItem value="1">hayloft</SelectItem>
+                                        <SelectItem value="2">openAir</SelectItem>
+                                        <SelectItem value="3">salt</SelectItem>
+                                        <SelectItem value="4">pressing</SelectItem>
+                                        <SelectItem value="5">cold</SelectItem>
                                     </SelectContent>
                                 </Select>
                                 <FormMessage />

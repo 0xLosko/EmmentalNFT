@@ -43,6 +43,16 @@ const MintCard = ({ contractAdr }: { contractAdr: Address }) => {
     });
 
     const {
+        data: desc,
+        isLoading: descLoading,
+        refetch: refetchDesc,
+        error: descError,
+    } = useReadContract({
+        ...contractConfig,
+        functionName: 'description',
+    });
+
+    const {
         data: maximumSupply,
         isLoading: maximumSupplyLoading,
         refetch: refetchMaximumSupply,
@@ -67,6 +77,7 @@ const MintCard = ({ contractAdr }: { contractAdr: Address }) => {
         refetchNbMint();
         refetchMaximumSupply();
         refetchNftUrl();
+        refetchDesc();
     }, [contractAdr]);
     return (
         <Card
@@ -78,7 +89,7 @@ const MintCard = ({ contractAdr }: { contractAdr: Address }) => {
                     {name as string}
                 </CardTitle>
                 <CardDescription className="text-xl">
-                    Rajouter un champs description dans le sc
+                    {desc&& desc}
                 </CardDescription>
             </CardHeader>
             <CardContent className="h-[200px]">

@@ -59,11 +59,22 @@ const CollectionPage: NextPageWithLayout = () => {
         functionName: "getAllNftInMarket",
     });
 
+    const {
+        data: desc,
+        isLoading: descLoading,
+        refetch: refetchDesc,
+        error: descError,
+    } = useReadContract({
+        ...contractConfig,
+        functionName: 'description',
+    });
+
     useEffect(() => {
         refetchName();
         refetchMaximumSupply();
         refetchNftUrl();
         refetchNftListed();
+        refetchDesc();
     }, [refetchName, refetchMaximumSupply, refetchNftUrl, refetchNftListed]);
 
     const isNftListed = (tokenId: number) => {
@@ -108,14 +119,18 @@ const CollectionPage: NextPageWithLayout = () => {
                         ? "Loading..."
                         : Number(maximumSupply)}
                 </p>
+                <p className="text-customYellow mt-2">
+                    {desc&& desc}
+                </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 overflow-y-scroll max-h-[70vh] hide-scrollbar">
+            <div
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 overflow-y-scroll max-h-[80vh] hide-scrollbar">
                 {(maximumSupply as number) > 0 &&
                     Array.from(
-                        { length: Number(maximumSupply) },
+                        {length: Number(maximumSupply)},
                         (_, index) => (
                             <div
-                                className="nft-item p-4 rounded-lg bg-cardBg"
+                                className="nft-item p-4 rounded-lg bg-cardBg cursor-pointer"
                                 key={index}
                                 
                             >
