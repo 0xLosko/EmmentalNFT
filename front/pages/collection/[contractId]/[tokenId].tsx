@@ -96,7 +96,7 @@ const CollectionPage: NextPageWithLayout = () => {
     return (
         <div className="container mx-auto px-4 overflow-hidden flex flex-col">
             <div className="flex flex-row">
-                <div className="flex flex-col gap-4 justify-items-center">
+                <div className="flex flex-col gap-4">
                     <div className="border border-gray-500 bg-black rounded-2xl h-[394px] flex justify-center m-1">
                         {tokenUri ? (
                             <img
@@ -146,7 +146,7 @@ const CollectionPage: NextPageWithLayout = () => {
                     ) : undefined}
                 </div>
             </div>
-            <div className="pt-4">
+            <div className="pt-5">
                 {nftHistory ? (
                     <HistoryTable histories={nftHistory as Listed[]} />
                 ) : (
