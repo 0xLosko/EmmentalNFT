@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { Listed } from "../../types/listed";
 import { Address } from "../../types/solidity-native";
+import { ethers } from "ethers";
+import { BuyButton } from "../../components/button/buyButton";
 
 const CollectionPage: NextPageWithLayout = () => {
     const { address } = useAccount();
@@ -115,6 +117,7 @@ const CollectionPage: NextPageWithLayout = () => {
                             <div
                                 className="nft-item p-4 rounded-lg bg-cardBg"
                                 key={index}
+                                
                             >
                                 <Image
                                     src={nftUrl as string}
@@ -134,10 +137,13 @@ const CollectionPage: NextPageWithLayout = () => {
                                 {isNftListed(index) && (
                                     <>
                                         <p className="text-gray-500">
-                                            Listed, Price: {getNftPrice(index)}{" "}
+                                            Listed, Price: {ethers.utils.formatEther(getNftPrice(index)?? 0)}{" "}
                                             ETH
                                         </p>
-                                        <Button>Buy now</Button>
+                                        <BuyButton
+                                            price={getNftPrice(index)?? BigInt(0)}
+                                            text="Buy now"
+                                        />
                                     </>
                                 )}
                             </div>

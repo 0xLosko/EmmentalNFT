@@ -121,7 +121,7 @@ const CollectionPage: NextPageWithLayout = () => {
                         <Skeleton className="w-[700px] h-72" />
                     )}
                 </div>
-                <div className="flex flex-col w-full content-center">
+                <div className="flex flex-col w-full content-center]">
                     {address === (owner as Address) ||
                     (isListed &&
                         (marketData
@@ -146,11 +146,13 @@ const CollectionPage: NextPageWithLayout = () => {
                     ) : undefined}
                 </div>
             </div>
-            {nftHistory ? (
-                <HistoryTable histories={nftHistory as Listed[]} />
-            ) : (
-                <Skeleton className="w-[700px] h-72" />
-            )}
+            <div className="pt-4">
+                {nftHistory ? (
+                    <HistoryTable histories={nftHistory as Listed[]} />
+                ) : (
+                    <Skeleton className="w-[700px] h-72" />
+                )}
+            </div>
         </div>
     );
 };

@@ -58,8 +58,8 @@ export function ManageNftCard({
     const [price, setPrice] = React.useState<number>(Number(ethers.utils.formatEther(initialPrice)));
 
     return (
-        <div className="ml-4 rounded-2xl p-px bg-gradient-to-b from-gray-500 to-[#24210F] w-full ">
-            <Card className="border-0 rounded-2xl p-px bg-gradient-to-b from-gray-800 to-[#24210F] w-full ">
+        <div className="ml-4 rounded-2xl p-px bg-gradient-to-b from-[#414141] to-[#24210F] w-full hover:to-[#414141]">
+            <Card className="border-0 rounded-2xl p-px bg-gradient-to-b from-[#2c2c2c] to-[#24210F] w-full hover:to-[#2c2c2c]">
                 <CardHeader>
                     <CardTitle className="text-gray-200">
                         Manage your cheese
@@ -80,7 +80,11 @@ export function ManageNftCard({
                             value={price.toString()}
                             onChange={(event) =>
                                 setPrice(
-                                    Number(ethers.utils.formatEther(event.target.value))
+                                    Number(
+                                        ethers.utils.formatEther(
+                                            event.target.value
+                                        )
+                                    )
                                 )
                             }
                         />

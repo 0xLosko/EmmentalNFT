@@ -16,8 +16,8 @@ export function NftDetailsAccordion({
     details: INftDetails;
     }) {
     return (
-        <div className="rounded-2xl p-px bg-gradient-to-b from-gray-500 to-transparent h-72 w-[700px]">
-            <div className="rounded-2xl p-px bg-gradient-to-b from-gray-800 to-[#24210F] w-full h-full">
+        <div className="rounded-2xl p-px ml-4 bg-gradient-to-b from-[#414141] to-[#24210F] hover:to-[#414141] h-72 w-[700px]">
+            <div className="rounded-2xl p-px bg-gradient-to-b from-[#2c2c2c] to-[#24210F] hover:to-[#2c2c2c] w-full h-full">
                 <Accordion type="single" collapsible className="m-1">
                     <AccordionItem value="item-1">
                         <AccordionTrigger>Description</AccordionTrigger>
