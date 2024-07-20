@@ -96,14 +96,18 @@ const CollectionPage: NextPageWithLayout = () => {
         functionName: "getNftInMarket",
         args: [tokenId],
     });
+    
+    const { data: nbMinted } = useReadContract({
+        ...contractConfig,
+        functionName: "getNbMint"
+    });
 
     useEffect(() => {
         refetchCheeseMetadata();
         refetchtokenUri();
         refetchIsListed();
         refetchOwner();
-        refetchDesc();
-    }, [cheeseMetadata, tokenUri, owner, isListed, marketData]);
+    }, [isListed]);
     return (
         <div className="container mx-auto px-4 overflow-hidden flex flex-col">
             <div className="flex flex-row">
@@ -113,7 +117,13 @@ const CollectionPage: NextPageWithLayout = () => {
                             <img
                                 src={tokenUri! as string}
                                 alt="NFT Image"
-                                className="aspect-square m-1"
+                                className="m-1 object-contain"
+                            />
+                        ) : (nbMinted ?? 0) <= tokenId! ? (
+                            <img
+                                src="/ico/CheeseNotMinted.png"
+                                alt="NFT Not Minted"
+                                className="m-1 object-contain"
                             />
                         ) : (
                             <Skeleton className="w-96 h-96 m-1" />
@@ -121,7 +131,7 @@ const CollectionPage: NextPageWithLayout = () => {
                     </div>
                     {cheeseMetadata ? (
                         <NftDetailsAccordion
-                            description={desc}
+                            description={desc as string}
                             attributes={cheeseMetadata! as CheeseMetadata}
                             details={{
                                 contractAddress: contractConfig.address,
