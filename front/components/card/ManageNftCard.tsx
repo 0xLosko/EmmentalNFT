@@ -54,7 +54,7 @@ export function ManageNftCard({
             args: [tokenId],
         });
     };
-
+    console.log(callError);
     const [price, setPrice] = React.useState<number>(Number(ethers.utils.formatEther(initialPrice)));
 
     return (
@@ -81,9 +81,7 @@ export function ManageNftCard({
                             onChange={(event) =>
                                 setPrice(
                                     Number(
-                                        ethers.utils.formatEther(
                                             event.target.value
-                                        )
                                     )
                                 )
                             }

@@ -203,6 +203,7 @@ contract CheeseCollection is ERC721URIStorage{
                 revert U_NOT_THE_OWNER(_tokenId);
             }
             deleteNftInMarket(_tokenId, false);
+            _approve(msg.sender, _tokenId, address(this));
             transferFrom(address(this), msg.sender, _tokenId);
             emit NftUnlisted(_tokenId);
         }
