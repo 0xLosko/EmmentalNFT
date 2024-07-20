@@ -1,14 +1,19 @@
 import { Button } from "../../components/ui/button";
 import { NextPageWithLayout } from "../_app";
 import Image from "next/image";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import { CollectionContractAbi } from "../../constants";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
-import { Listed } from "../../types/listed";
+import React, { useEffect, useState, useMemo } from "react";
 import { Address } from "../../types/solidity-native";
 import { ethers } from "ethers";
 import { BuyButton } from "../../components/button/buyButton";
+
+interface NftItems {
+    listed: boolean;
+    number: number;
+    price: number | undefined;
+}
 
 const CollectionPage: NextPageWithLayout = () => {
     const { address } = useAccount();
@@ -19,55 +24,33 @@ const CollectionPage: NextPageWithLayout = () => {
         abi: CollectionContractAbi,
     };
 
-    const {
-        data: name,
-        isLoading: nameLoading,
-        refetch: refetchName,
-        error: nameError,
-    } = useReadContract({
+    const { data: name, isLoading: nameLoading, refetch: refetchName } = useReadContract({
         ...contractConfig,
         functionName: "name",
     });
 
-    const {
-        data: maximumSupply,
-        isLoading: maximumSupplyLoading,
-        refetch: refetchMaximumSupply,
-        error: maximumSupplyError,
-    } = useReadContract({
+    const { data: maximumSupply, isLoading: maximumSupplyLoading, refetch: refetchMaximumSupply } = useReadContract({
         ...contractConfig,
         functionName: "getMaximumSupply",
     });
 
-    const {
-        data: nftUrl,
-        isLoading: nftUrlLoading,
-        refetch: refetchNftUrl,
-        error: nftUrlError,
-    } = useReadContract({
+    const { data: nftUrl, isLoading: nftUrlLoading, refetch: refetchNftUrl } = useReadContract({
         ...contractConfig,
         functionName: "getBaseUri",
     });
 
-    const {
-        data: nftListed,
-        isLoading: nftListedLoading,
-        refetch: refetchNftListed,
-        error: nftListedError,
-    } = useReadContract({
+    const { data: nftListed, isLoading: nftListedLoading, refetch: refetchNftListed } = useReadContract({
         ...contractConfig,
         functionName: "getAllNftInMarket",
     });
 
-    const {
-        data: desc,
-        isLoading: descLoading,
-        refetch: refetchDesc,
-        error: descError,
-    } = useReadContract({
+    const { data: desc, isLoading: descLoading, refetch: refetchDesc } = useReadContract({
         ...contractConfig,
-        functionName: 'description',
+        functionName: "description",
     });
+
+    const [nftList, setNftList] = useState<NftItems[]>([]);
+    const [sortOrder, setSortOrder] = useState<'number-asc' | 'number-desc' | 'price-asc' | 'price-desc'>('number-asc');
 
     useEffect(() => {
         refetchName();
@@ -75,19 +58,51 @@ const CollectionPage: NextPageWithLayout = () => {
         refetchNftUrl();
         refetchNftListed();
         refetchDesc();
-    }, [refetchName, refetchMaximumSupply, refetchNftUrl, refetchNftListed]);
+    }, [router.query.contractId]);
 
-    const isNftListed = (tokenId: number) => {
-        return (nftListed as Listed[])?.some(
-            (nft: { tokenId: number }) => nft.tokenId === tokenId
-        );
+    useEffect(() => {
+        if (!nftListedLoading && maximumSupply && nftListed) {
+            const list = createListed(maximumSupply, nftListed);
+            setNftList(list);
+        }
+    }, [nftListedLoading, maximumSupply, nftListed]);
+
+    const createListed = (maxSupply: number, nftListed: any): NftItems[] => {
+        const list: NftItems[] = [];
+        for (let i = 0; i < maxSupply; i++) {
+            if (nftListed[i]) {
+                list.push({
+                    listed: true,
+                    number: i,
+                    price: nftListed[i].price ? Number(ethers.utils.formatEther(nftListed[i].price)) : undefined
+                });
+            } else {
+                list.push({
+                    listed: false,
+                    number: i,
+                    price: undefined
+                });
+            }
+        }
+        return list;
     };
 
-    const getNftPrice = (tokenId: number) => {
-        const nft = (nftListed as Listed[])?.find(
-            (nft: { tokenId: number }) => nft.tokenId === tokenId
-        );
-        return nft?.price;
+    const sortedNftList = useMemo(() => {
+        let sortedList = [...nftList];
+        if (sortOrder === 'number-asc') {
+            sortedList.sort((a, b) => a.number - b.number);
+        } else if (sortOrder === 'number-desc') {
+            sortedList.sort((a, b) => b.number - a.number);
+        } else if (sortOrder === 'price-asc') {
+            sortedList.sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity));
+        } else if (sortOrder === 'price-desc') {
+            sortedList.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+        }
+        return sortedList;
+    }, [nftList, sortOrder]);
+
+    const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSortOrder(e.target.value as 'number-asc' | 'number-desc' | 'price-asc' | 'price-desc');
     };
 
     return (
@@ -120,50 +135,52 @@ const CollectionPage: NextPageWithLayout = () => {
                         : Number(maximumSupply)}
                 </p>
                 <p className="text-customYellow mt-2">
-                    {desc&& desc}
+                    {desc && desc}
                 </p>
+                <div className="flex gap-4 mt-4 items-center">
+                    <label htmlFor="sortOrder" className="mr-2">Sort by:</label>
+                    <select id="sortOrder" onChange={handleSortChange} value={sortOrder} className="p-2 rounded text-customYellow bg-cardBg">
+                        <option value="number-asc">Number Ascending</option>
+                        <option value="number-desc">Number Descending</option>
+                        <option value="price-asc">Price Ascending</option>
+                        <option value="price-desc">Price Descending</option>
+                    </select>
+                </div>
             </div>
-            <div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 overflow-y-scroll max-h-[80vh] hide-scrollbar">
-                {(maximumSupply as number) > 0 &&
-                    Array.from(
-                        {length: Number(maximumSupply)},
-                        (_, index) => (
-                            <div
-                                className="nft-item p-4 rounded-lg bg-cardBg cursor-pointer"
-                                key={index}
-                                
-                            >
-                                <Image
-                                    src={nftUrl as string}
-                                    alt={"nft it"}
-                                    width={0}
-                                    height={0}
-                                    sizes="100vw"
-                                    style={{
-                                        width: "300px",
-                                        height: "auto",
-                                        borderRadius: "12px",
-                                    }}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 overflow-y-scroll max-h-[80vh] hide-scrollbar">
+                {sortedNftList.map((nft, index) => (
+                    <div
+                        className="nft-item p-4 rounded-lg bg-cardBg cursor-pointer"
+                        key={index}
+                        onClick={() => { router.push(router.asPath + '/' + nft.number.toString()) }}
+                    >
+                        <Image
+                            src={nftUrl as string}
+                            alt={"nft it"}
+                            width={0}
+                            height={0}
+                            sizes="100vw"
+                            style={{
+                                width: "300px",
+                                height: "auto",
+                                borderRadius: "12px",
+                            }}
+                        />
+                        <h2 className="py-2 font-bold min-h-24 flex">
+                            {name + " #" + nft.number}
+                        </h2>
+                        {nft.listed && (
+                            <div className="flex">
+                                <p className="text-gray-500">
+                                    Listed, Price: <span className="text-customYellow">{nft.price} ETH</span>
+                                </p>
+                                <BuyButton
+                                    text="View Now"
                                 />
-                                <h2 className="py-2 font-bold min-h-24 flex">
-                                    {name + " #" + index}
-                                </h2>
-                                {isNftListed(index) && (
-                                    <>
-                                        <p className="text-gray-500">
-                                            Listed, Price: {ethers.utils.formatEther(getNftPrice(index)?? 0)}{" "}
-                                            ETH
-                                        </p>
-                                        <BuyButton
-                                            price={getNftPrice(index)?? BigInt(0)}
-                                            text="Buy now"
-                                        />
-                                    </>
-                                )}
                             </div>
-                        )
-                    )}
+                        )}
+                    </div>
+                ))}
             </div>
             <style jsx>{`
                 .hide-scrollbar::-webkit-scrollbar {

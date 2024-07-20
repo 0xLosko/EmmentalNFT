@@ -71,6 +71,16 @@ const CollectionPage: NextPageWithLayout = () => {
     });
 
     const {
+        data: desc,
+        isLoading: descLoading,
+        refetch: refetchDesc,
+        error: descError,
+    } = useReadContract({
+        ...contractConfig,
+        functionName: 'description',
+    });
+
+    const {
         data: nftHistory,
         isLoading: getNftHistoryLoading,
         refetch: refetchGetNftHistory,
@@ -92,6 +102,7 @@ const CollectionPage: NextPageWithLayout = () => {
         refetchtokenUri();
         refetchIsListed();
         refetchOwner();
+        refetchDesc();
     }, [cheeseMetadata, tokenUri, owner, isListed, marketData]);
     return (
         <div className="container mx-auto px-4 overflow-hidden flex flex-col">
@@ -110,7 +121,7 @@ const CollectionPage: NextPageWithLayout = () => {
                     </div>
                     {cheeseMetadata ? (
                         <NftDetailsAccordion
-                            description="Implement Nft description in the the contract"
+                            description={desc}
                             attributes={cheeseMetadata! as CheeseMetadata}
                             details={{
                                 contractAddress: contractConfig.address,

@@ -27,6 +27,15 @@ const Mint: NextPageWithLayout = () => {
         });
     }
     const {
+        data: desc,
+        isLoading: descLoading,
+        refetch: refetchDesc,
+        error: descError,
+    } = useReadContract({
+        ...contractConfig,
+        functionName: 'description',
+    });
+    const {
         data: name,
         isLoading: nameLoading,
         refetch: refetchName,
@@ -70,6 +79,7 @@ const Mint: NextPageWithLayout = () => {
         refetchName();
         refetchMaximumSupply();
         refetchNftUrl();
+        refetchDesc();
     }, [contractId]);
 
     if (mintError) {
@@ -87,12 +97,7 @@ const Mint: NextPageWithLayout = () => {
             <div className="flex justify-center flex-col min-h-[500px] p-3 max-w-[50%]">
                 <h1 className="text-4xl w-fit">{name as string}</h1>
                 <h3 className="m-w-4/5 mt-9">
-                    ******Rajouter champs description dans le nft ******ry's standard dummy text ever since the 1500s,
-                    when an unknown printer took a galley of type and scrambled it to make a type specimen book.
-                    It has survived not only five centuries, but also the leap into electronic typesetting,
-                    remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset
-                    sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like
-                    Aldus PageMaker including versions of Lorem Ipsum.
+                    {desc&& desc}
                 </h3>
                 <div className="flex flex-row items-center justify-center bg-cardBg h-14 mt-9 rounded-xl p-3">
                     <div className="w-3/4 flex flex-col items-center justify-center">
