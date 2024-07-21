@@ -28,14 +28,13 @@ export function HistoryTable({ histories }: { histories: Listed[] }) {
                     {histories.map((history, index) => (
                         <TableRow key={index}>
                             <TableCell className="font-medium">
-                                {new Date(
-                                    Number(history.timestamp)
-                                ).toLocaleString("fr-FR", {
+                                {new Date(Number(history.timestamp )* 1000).toLocaleString("fr-FR", {
                                     month: "short",
                                     day: "numeric",
                                     year: "numeric",
                                     hour: "numeric",
                                     minute: "numeric",
+                                    second: "numeric"
                                 })}
                             </TableCell>
                             <TableCell>{history.from}</TableCell>

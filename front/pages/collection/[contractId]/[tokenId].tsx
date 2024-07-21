@@ -167,7 +167,7 @@ const CollectionPage: NextPageWithLayout = () => {
             </div>
             <div className="pt-5">
                 {nftHistory ? (
-                    <HistoryTable histories={nftHistory as Listed[]} />
+                    <HistoryTable histories={nftHistory.sort((a, b) => Number(b.timestamp) - Number(a.timestamp)) as Listed[]} />
                 ) : (
                     <Skeleton className="w-[700px] h-72" />
                 )}
