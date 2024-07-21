@@ -78,11 +78,11 @@ function ProfileForm() {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 max-sm:flex max-sm:flex-col">
                     <FormField
                         control={form.control}
                         name="name"
-                        render={({ field }) => (
+                        render={({field}) => (
                             <FormItem>
                                 <FormLabel>Name</FormLabel>
                                 <FormControl>
@@ -91,14 +91,14 @@ function ProfileForm() {
                                 <FormDescription>
                                     This is the Name of the collection.
                                 </FormDescription>
-                                <FormMessage />
+                                <FormMessage/>
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="symbol"
-                        render={({ field }) => (
+                        render={({field}) => (
                             <FormItem>
                                 <FormLabel>Symbol</FormLabel>
                                 <FormControl>
@@ -107,14 +107,14 @@ function ProfileForm() {
                                 <FormDescription>
                                     This is the Symbol of the collection.
                                 </FormDescription>
-                                <FormMessage />
+                                <FormMessage/>
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="desc"
-                        render={({ field }) => (
+                        render={({field}) => (
                             <FormItem>
                                 <FormLabel>Symbol</FormLabel>
                                 <FormControl>
@@ -123,20 +123,20 @@ function ProfileForm() {
                                 <FormDescription>
                                     This is the description of the collection.
                                 </FormDescription>
-                                <FormMessage />
+                                <FormMessage/>
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="agingMethod"
-                        render={({ field }) => (
+                        render={({field}) => (
                             <FormItem>
                                 <FormLabel>Aging Method</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select an aging method" />
+                                            <SelectValue placeholder="Select an aging method"/>
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
@@ -148,14 +148,14 @@ function ProfileForm() {
                                         <SelectItem value="5">cold</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <FormMessage />
+                                <FormMessage/>
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="maximumSupply"
-                        render={({ field }) => (
+                        render={({field}) => (
                             <FormItem>
                                 <FormLabel>Max Supply</FormLabel>
                                 <FormControl>
@@ -169,14 +169,14 @@ function ProfileForm() {
                                 <FormDescription>
                                     This is the max supply for the collection.
                                 </FormDescription>
-                                <FormMessage />
+                                <FormMessage/>
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="imageUrl"
-                        render={({ field }) => (
+                        render={({field}) => (
                             <FormItem>
                                 <FormLabel>Image Url</FormLabel>
                                 <FormControl>
@@ -185,13 +185,13 @@ function ProfileForm() {
                                 <FormDescription>
                                     This is the case for setup the url image for NFT.
                                 </FormDescription>
-                                <FormMessage />
+                                <FormMessage/>
                             </FormItem>
                         )}
                     />
-                    <div className="flex justify-center">
-                        <Button className="w-1/4 bg-customYellow/80 hover:bg-customYellow" type="submit">Submit</Button>
-                    </div>
+                </div>
+                <div className="flex justify-center w-full">
+                    <Button className="w-1/4 bg-customYellow/80 hover:bg-customYellow" type="submit">Submit</Button>
                 </div>
             </form>
         </Form>

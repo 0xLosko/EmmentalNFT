@@ -88,7 +88,7 @@ const MintCard = ({ contractAdr }: { contractAdr: Address }) => {
                 <CardTitle className="text-3xl text-gray-200">
                     {name as string}
                 </CardTitle>
-                <CardDescription className="text-xl">
+                <CardDescription className="text-xl max-sm:h-fit break-words">
                     {desc&& desc}
                 </CardDescription>
             </CardHeader>
@@ -108,8 +108,8 @@ const MintCard = ({ contractAdr }: { contractAdr: Address }) => {
                     />
                 </div>
             </CardContent>
-            <CardFooter className="flex justify-end">
-                <div className="flex flex-row w-1/6 items-center gap-3">
+            <CardFooter className="flex justify-end max-sm:justify-center">
+                <div className="flex flex-row w-1/6 items-center gap-3 max-sm:w-full">
                     <div className="w-full">
                         <p className="text-customYellow">{`${nbMint} / ${maximumSupply}`}</p>
                         <Progress

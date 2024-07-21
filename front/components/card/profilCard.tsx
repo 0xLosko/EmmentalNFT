@@ -111,7 +111,7 @@ const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
                                     borderRadius: "12px",
                                 }}
                             />
-                            <h2 className="py-2 font-bold min-h-24 flex">
+                            <h2 className="py-2 font-bold min-h-24 flex max-sm:break-words">
                                 {name + " #" + id}
                             </h2>
                             <h3>

@@ -1,7 +1,5 @@
-import { Button } from "../../../components/ui/button";
 import { NextPageWithLayout } from "../../_app";
-import Image from "next/image";
-import { useAccount, useReadContract, useWriteContract } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import { CollectionContractAbi } from "../../../constants";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -10,9 +8,7 @@ import { Address } from "../../../types/solidity-native";
 import { NftDetailsAccordion } from "../../../components/accordion/nftDetailsAccordion";
 import { CheeseMetadata } from "../../../types/nft-metadata";
 import { Skeleton } from "../../../components/ui/skeleton";
-import { Card } from "../../../components/ui/card";
 import { BuyCard } from "../../../components/card/buyCard";
-import { BigNumberish } from "ethers";
 import { ManageNftCard } from "../../../components/card/ManageNftCard";
 import { HistoryTable } from "../../../components/table/historyTable";
 
@@ -109,15 +105,17 @@ const CollectionPage: NextPageWithLayout = () => {
         refetchOwner();
     }, [isListed]);
     return (
-        <div className="container mx-auto px-4 overflow-hidden flex flex-col">
-            <div className="flex flex-row">
-                <div className="flex flex-col gap-4">
-                    <div className="border border-gray-500 bg-black rounded-2xl h-[394px] flex justify-center m-1">
+        <div className="container mx-auto px-4 overflow-hidden flex flex-col max-sm:w-full max-sm:px-0">
+            <div className="flex flex-row max-sm:flex-col">
+                <div className="flex flex-col gap-4 max-sm:w-full">
+                    <div className="border border-gray-500 bg-black rounded-2xl h-[394px] flex justify-center m-1
+                    max-sm:w-full max-sm:h-200px">
                         {tokenUri ? (
                             <img
                                 src={tokenUri! as string}
                                 alt="NFT Image"
-                                className="m-1 object-contain"
+                                className="m-1 object-contain
+                                max-sm:w-full max-sm:object-none"
                             />
                         ) : (nbMinted ?? 0) <= tokenId! ? (
                             <img

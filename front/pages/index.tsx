@@ -66,7 +66,9 @@ const Discover: NextPageWithLayout = () => {
     return (
         <>
             <section>
-                <h2 className="text-5xl my-16 animate-text bg-gradient-to-r from-teal-500 via-purple-500 to-orange-500 bg-clip-text text-transparent font-black">
+                <h2 className="text-5xl my-16 animate-text bg-gradient-to-r from-teal-500
+                via-purple-500 to-orange-500 bg-clip-text text-transparent font-black
+                max-sm:text-4xl max-sm:my-8">
                     Mint Now
                 </h2>
                 <Carousel>
@@ -95,7 +97,7 @@ const Discover: NextPageWithLayout = () => {
                 </Carousel>
             </section>
             <section>
-                <h2 className="text-5xl my-16 text-gray-300 font-black">
+                <h2 className="text-5xl my-16 text-gray-300 font-black max-sm:my-8 max-sm:text-4xl">
                     Discover
                 </h2>
                 {(collectionList as []).length > 0 ? (

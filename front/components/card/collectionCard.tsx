@@ -78,7 +78,7 @@ const CollectionCard = ({ contractAdr }: { contractAdr: Address }) => {
                 </div>
             </CardContent>
             <CardFooter className="flex justify-center flex-col">
-                <h2 className="text-xl text-gray-200 font-bold">{name as string}</h2>
+                <h2 className="text-xl text-gray-200 font-bold max-sm:h-fit max-sm:break-words">{name as string}</h2>
                 <p className="text-customYellow text-sm">Max Supply {Number(maximumSupply)}</p>
             </CardFooter>
         </Card>
