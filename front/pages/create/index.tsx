@@ -116,7 +116,7 @@ function ProfileForm() {
                         name="desc"
                         render={({field}) => (
                             <FormItem>
-                                <FormLabel>Symbol</FormLabel>
+                                <FormLabel>Description</FormLabel>
                                 <FormControl>
                                     <Input placeholder="description" {...field} />
                                 </FormControl>

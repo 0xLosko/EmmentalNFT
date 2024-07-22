@@ -2,6 +2,7 @@
 pragma solidity ^0.8.24;
 
 import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
         //////////////////////////////////////////////////////////
@@ -36,6 +37,8 @@ contract CheeseCollection is ERC721URIStorage{
     // =============================================================
     //                            ERRORS
     // =============================================================
+
+    error NOT_MINTED(uint256 nftId);
 
     error ALREADY_LISTED(uint256 nftId);
 
@@ -94,12 +97,19 @@ contract CheeseCollection is ERC721URIStorage{
         cold // Affinage à froid
     }
 
+    enum MarketStatus {
+        Pending,
+        Solded,
+        Unlisted
+    }
+
     struct Listed {
         uint256 price;
         address from;
         address to;
         uint256 tokenId;
         uint256 timestamp;
+        MarketStatus status;
     }
 
     struct NftHistory {
@@ -111,8 +121,6 @@ contract CheeseCollection is ERC721URIStorage{
         uint256 productionYear;
         uint256 shape;
     }
-
-    mapping(uint256 => Listed) public market;
 
     mapping(uint256 => NftHistory) public marketHistory;
 
@@ -153,19 +161,29 @@ contract CheeseCollection is ERC721URIStorage{
         cheeseProperties[indexMint] = CheeseBaseProperties( 0, 0);
         // Should hit the NFT picture eg. www.ipfs.com/{5}
         super._setTokenURI(indexMint, baseURI);//string.concat(baseURI, Strings.toString(indexMint)));
+        emit NftMinted(indexMint, msg.sender);
         indexMint++;
-        emit NftMinted(indexMint-1, msg.sender);
     }
+
+    // Contract too big when including it
+    // modifier onlyMinted(uint256 _tokenId){
+    //     if (_tokenId >= indexMint){
+    //         revert NOT_MINTED(_tokenId);
+    //     }
+    //     _;
+    // }
 
     function getNftMetaDataById(uint256 _tokenId) public view returns (CheeseBaseProperties memory){
         return cheeseProperties[_tokenId];
     }
 
     function isListed(uint256 _tokenId) public view returns (bool) {
-        for (uint i = 0; i < nbListedNft; i++) {
-            if (market[i].tokenId == _tokenId) {
-                return true;
-            }
+        uint256 index = marketHistory[_tokenId].count;
+        if (index <= 0){
+            return false;
+        }
+        if (marketHistory[_tokenId].history[index - 1].status == MarketStatus.Pending){
+            return true;
         }
         return false;
     }
@@ -174,65 +192,53 @@ contract CheeseCollection is ERC721URIStorage{
         if (isListed(_tokenId)) {
             revert ALREADY_LISTED(_tokenId);
         }
-        market[nbListedNft] = Listed(_price, msg.sender, address(this), _tokenId, block.timestamp);
-        nbListedNft++;
+        marketHistory[_tokenId].history[marketHistory[_tokenId].count] = Listed(_price, msg.sender, address(this), _tokenId, block.timestamp, MarketStatus.Pending);
+        marketHistory[_tokenId].count++;
         approve(address(this), _tokenId);
         transferFrom(msg.sender, address(this), _tokenId);
         emit NftListed(_tokenId, _price);
+        nbListedNft++;
     }
 
-    function getIdForNftInMarket(uint256 _tokenId) public view returns (uint256) {
-        if (isListed(_tokenId)) {
-            for (uint i = 0; i < nbListedNft; i++) {
-                if (market[i].tokenId == _tokenId) {
-                    return i;
-                }
-            }
+    function getNftListed(uint _tokenId) public view returns (Listed memory) {
+        if (!isListed(_tokenId)) {
+            revert NOT_LISTED(_tokenId);
         }
-        revert("Nft not listed in market");
-    }
-
-    function getNftInMarket(uint _tokenId) public view returns (Listed memory) {
-        return market[getIdForNftInMarket(_tokenId)];
+        return marketHistory[_tokenId].history[marketHistory[_tokenId].count-1];
     }
 
     function unListNft(uint256 _tokenId) public {
-        if (isListed(_tokenId)) {
-            uint256 indexNftInMarket = getIdForNftInMarket(_tokenId);
-            if (msg.sender != market[indexNftInMarket].from) {
-                revert U_NOT_THE_OWNER(_tokenId);
-            }
-            deleteNftInMarket(_tokenId, false);
-            _approve(msg.sender, _tokenId, address(this));
-            transferFrom(address(this), msg.sender, _tokenId);
-            emit NftUnlisted(_tokenId);
+        if (!isListed(_tokenId)) {
+            revert NOT_LISTED(_tokenId);
         }
-    }
-
-    function deleteNftInMarket(uint256 _tokenId, bool useHistory) private {
-        uint256 indexNftInMarket = getIdForNftInMarket(_tokenId);
-        if (useHistory){
-            marketHistory[_tokenId].history[marketHistory[_tokenId].count] = market[indexNftInMarket];
-            marketHistory[_tokenId].history[marketHistory[_tokenId].count].to = msg.sender;
-            marketHistory[_tokenId].count++;
+        uint256 index = marketHistory[_tokenId].count-1;
+        if (msg.sender != marketHistory[_tokenId].history[index].from) {
+            revert U_NOT_THE_OWNER(_tokenId);
         }
-        for (uint256 i = indexNftInMarket+1; i < nbListedNft; i++){
-            market[i-1] = market[i];
-        }
+        marketHistory[_tokenId].history[index].status = MarketStatus.Unlisted;
+        _approve(msg.sender, _tokenId, address(this));
+        transferFrom(address(this), msg.sender, _tokenId);
+        emit NftUnlisted(_tokenId);
         nbListedNft--;
     }
 
     function buyNft(uint256 _tokenId) public payable {
         // NFT PRICE IN WEI !!
         //CONDITION POUR PAS SE LACHETER A SOIT MEME
-        uint256 indexNftInMarket = getIdForNftInMarket(_tokenId);
-        if(msg.value != market[indexNftInMarket].price){
-            revert DONT_HAVE_MONEY_FOR(market[indexNftInMarket].price);
+        if (!isListed(_tokenId)) {
+            revert NOT_LISTED(_tokenId);
         }
-        payable(market[indexNftInMarket].from).transfer(msg.value);
+        uint256 indexNftInMarket = marketHistory[_tokenId].count-1;
+        uint256 price = marketHistory[_tokenId].history[indexNftInMarket].price;
+        if(msg.value != price){
+            revert DONT_HAVE_MONEY_FOR(price);
+        }
+        payable(marketHistory[_tokenId].history[indexNftInMarket].from).transfer(price);
         _transfer(address(this), msg.sender, _tokenId);
-        deleteNftInMarket(_tokenId, true);
+        marketHistory[_tokenId].history[indexNftInMarket].status = MarketStatus.Solded;
+        marketHistory[_tokenId].history[indexNftInMarket].to = msg.sender;
         emit NftSold(_tokenId);
+        nbListedNft--;
     }
 
 
@@ -240,8 +246,12 @@ contract CheeseCollection is ERC721URIStorage{
 
     function getAllNftInMarket() public view returns (Listed[] memory){
         Listed[] memory rt = new Listed[](nbListedNft);
-        for (uint256 i = 0; i < nbListedNft; i++){
-            rt[i] = market[i];
+        uint256 j = 0;
+        for (uint256 i = 0; i < indexMint; i++){
+            if (isListed(i)){
+                rt[j] = marketHistory[i].history[marketHistory[i].count - 1];
+                j++;
+            }
         }
         return rt;
     }
@@ -274,8 +284,19 @@ contract CheeseCollection is ERC721URIStorage{
         return rt;
     }
 
+    function ownerOf(uint256 _tokenId) public view override (ERC721, IERC721) returns (address){
+        address ret = super.ownerOf(_tokenId);
+        if (isListed(_tokenId)){
+            return getNftListed(_tokenId).from;
+        }else{
+            return ret;
+        }
+
+    }
+
     function getNftHistory(uint256 _tokenId) public view returns (Listed[] memory){
-        Listed[] memory history = new Listed[](marketHistory[_tokenId].count);
+        uint index = marketHistory[_tokenId].count;
+        Listed[] memory history = new Listed[](index);
         for (uint256 i = 0; i < marketHistory[_tokenId].count; i++){
             history[i] = marketHistory[_tokenId].history[i];
         }

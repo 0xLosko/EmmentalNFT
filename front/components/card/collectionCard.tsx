@@ -65,21 +65,27 @@ const CollectionCard = ({ contractAdr }: { contractAdr: Address }) => {
         refetchNftUrl();
     }, [contractAdr]);
     return (
-        <Card className="w-full min-h-60 opacity-80 flex justify-center flex-col bg-cardBg border-0 hover:cursor-pointer
+        <Card
+            className="w-full min-h-60 opacity-80 flex justify-center flex-col bg-cardBg border-0 hover:cursor-pointer
         transition-opacity duration-300 hover:opacity-100 hover:shadow-lg"
-        onClick={() => router.push(`collection/${contractAdr}`)}>
-            <CardContent className="mt-4">
-                <div className="flex justify-center h-full">
-                    <Image src={nftUrl as string} alt="Logo"
-                           width={0}
-                           height={0}
-                           sizes="100vw"
-                           style={{ width: '200px', height: 'auto', borderRadius: '8px'}}/>
+            onClick={() => router.push(`collection/${contractAdr}`)}
+        >
+            <CardContent className="mt-4 flex justify-center">
+                <div className="h-full w-[200px]">
+                    <img
+                        src={nftUrl as string}
+                        alt="Logo"
+                        className="object-contain rounded-lg"
+                    />
                 </div>
             </CardContent>
             <CardFooter className="flex justify-center flex-col">
-                <h2 className="text-xl text-gray-200 font-bold max-sm:h-fit max-sm:break-words">{name as string}</h2>
-                <p className="text-customYellow text-sm">Max Supply {Number(maximumSupply)}</p>
+                <h2 className="text-xl text-gray-200 font-bold max-sm:h-fit max-sm:break-words">
+                    {name as string}
+                </h2>
+                <p className="text-customYellow text-sm">
+                    Max Supply {Number(maximumSupply)}
+                </p>
             </CardFooter>
         </Card>
     );

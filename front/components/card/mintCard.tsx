@@ -78,7 +78,7 @@ const MintCard = ({ contractAdr }: { contractAdr: Address }) => {
         refetchMaximumSupply();
         refetchNftUrl();
         refetchDesc();
-    }, [contractAdr]);
+    }, []);
     return (
         <Card
             className="w-full min-h-96 bg-cardBg border-0 hover:cursor-pointer opacity-85
@@ -89,22 +89,15 @@ const MintCard = ({ contractAdr }: { contractAdr: Address }) => {
                     {name as string}
                 </CardTitle>
                 <CardDescription className="text-xl max-sm:h-fit break-words">
-                    {desc&& desc}
+                    {desc ? (desc as string) : undefined}
                 </CardDescription>
             </CardHeader>
             <CardContent className="h-[200px]">
                 <div className="flex justify-center h-full">
-                    <Image
+                    <img
                         src={nftUrl as string}
                         alt="Logo"
-                        width={0}
-                        height={0}
-                        sizes="100vw"
-                        style={{
-                            width: "300px",
-                            height: "auto",
-                            borderRadius: "12px",
-                        }}
+                        className="object-contain rounded-lg"
                     />
                 </div>
             </CardContent>
