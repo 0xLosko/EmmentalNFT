@@ -31,7 +31,7 @@ export function BuyButton({ price, text }: { price: bigint, text: string }) {
     return (
         <Button
             className="ml-auto bg-customYellow/80 hover:bg-customYellow"
-            onClick={() => buyNft(price)}
+            onClick={() => {buyNft(price)}}
         >
             {text}
         </Button>

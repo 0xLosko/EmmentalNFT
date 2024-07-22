@@ -66,7 +66,6 @@ function ProfileForm() {
                         values.desc,
                     ],
                 });
-                console.log("Transaction result:", result);
             } catch (error) {
                 console.error("Transaction error:", error);
             }

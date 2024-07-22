@@ -12,7 +12,6 @@ import { useRouter } from "next/router";
 import { BuyButton } from "../button/buyButton";
 
 export function BuyCard({ price }: { price: bigint }) {
-    const router = useRouter();
     return (
         <div className="ml-4 rounded-2xl p-px bg-gradient-to-b from-[#414141] to-[#24210F] w-full hover:to-[#414141] ">
             <Card className="border-0 rounded-2xl p-px bg-gradient-to-b from-[#2c2c2c] to-[#24210F] w-full hover:to-[#2c2c2c] ">

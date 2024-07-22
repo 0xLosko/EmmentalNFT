@@ -47,7 +47,6 @@ const Discover: NextPageWithLayout = () => {
     useEffect(() => {
         refetchcollectionMintableList();
         refetchcollectionList();
-        console.log(collectionList);
     }, []);
 
     if (

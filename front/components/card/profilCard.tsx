@@ -6,6 +6,7 @@ import { useAccount, useReadContract } from 'wagmi';
 import { useRouter } from "next/router";
 import { Address } from '../../types/solidity-native';
 import { ethers } from 'ethers';
+import { Listed } from '../../types/listed';
 
 export enum FilterType {
     ALL,
@@ -48,7 +49,7 @@ const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
     } = useReadContract({
         ...contractConfig,
         functionName: "getNftIdForWallet",
-        account: router.query.adr ? router.query.adr : account.address,
+        account: router.query.adr ? router.query.adr as Address : account.address,
     });
 
     const {
@@ -70,7 +71,7 @@ const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
 
     useEffect(() => {
         if (getAllNftInMarket && account.address) {
-            const filtered = getAllNftInMarket
+            const filtered = (getAllNftInMarket as Listed[])
                 .filter(nft => nft.from === account.address)
                 .map(nft => nft.tokenId);
             setFilteredTokenIds(filtered);
@@ -81,13 +82,13 @@ const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
         return "loading";
     }
 
-    const combinedTokenIds = [...nftIdForWallet, ...filteredTokenIds].sort();
+    const combinedTokenIds = [...(nftIdForWallet as number[]), ...filteredTokenIds].sort();
 
     return (
         <>
             {combinedTokenIds.length > 0 ? (
                 combinedTokenIds.map((id: number) => {
-                    const nft = getAllNftInMarket.find(nft => nft.tokenId === id && nft.from === account.address);
+                    const nft = (getAllNftInMarket as Listed[]).find(nft => nft.tokenId === id && nft.from === account.address);
                     const isListed = !  !nft;
                     const price = isListed ? Number(ethers.utils.formatEther(nft.price)) : null;
 
@@ -96,7 +97,7 @@ const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
                             className="nft-item p-4 rounded-lg bg-cardBg cursor-pointer"
                             key={id}
                             onClick={() => {
-                                router.push('./collection/' + contractAdr + '/' + id);
+                                router.push('/collection/' + contractAdr + '/' + id);
                             }}
                         >
                             <Image

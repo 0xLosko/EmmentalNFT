@@ -108,8 +108,10 @@ const CollectionPage: NextPageWithLayout = () => {
         <div className="container mx-auto px-4 overflow-hidden flex flex-col max-sm:w-full max-sm:px-0">
             <div className="flex flex-row max-sm:flex-col">
                 <div className="flex flex-col gap-4 max-sm:w-full">
-                    <div className="border border-gray-500 bg-black rounded-2xl h-[394px] flex justify-center m-1
-                    max-sm:w-full max-sm:h-200px">
+                    <div
+                        className="border border-gray-500 bg-black rounded-2xl h-[394px] flex justify-center m-1
+                    max-sm:w-full max-sm:h-200px"
+                    >
                         {tokenUri ? (
                             <img
                                 src={tokenUri! as string}
@@ -167,7 +169,12 @@ const CollectionPage: NextPageWithLayout = () => {
             </div>
             <div className="pt-5">
                 {nftHistory ? (
-                    <HistoryTable histories={(nftHistory as Listed[]).sort((a, b) => Number(b.timestamp) - Number(a.timestamp))} />
+                    <HistoryTable
+                        histories={(nftHistory as Listed[]).sort(
+                            (a, b) => Number(b.timestamp) - Number(a.timestamp)
+                        )}
+                        address={contractConfig.address}
+                    />
                 ) : (
                     <Skeleton className="w-[700px] h-72" />
                 )}

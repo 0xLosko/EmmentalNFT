@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CheeseMetadata, INftDetails } from "../../types/nft-metadata";
 import {
     Accordion,
@@ -36,7 +37,12 @@ export function NftDetailsAccordion({
                     <AccordionItem value="item-3">
                         <AccordionTrigger>Details</AccordionTrigger>
                         <AccordionContent>
-                            Contract address: {details.contractAddress}
+                            Contract address:{" "}
+                            <Link
+                                href={"/collection/" + details.contractAddress}
+                            >
+                                {details.contractAddress}
+                            </Link>
                         </AccordionContent>
                         <AccordionContent>
                             Token Id: {details.tokenId}

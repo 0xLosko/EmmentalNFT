@@ -200,7 +200,7 @@ contract CheeseCollection is ERC721URIStorage{
         nbListedNft++;
     }
 
-    function getNftListed(uint _tokenId) public view returns (Listed memory) {
+    function getNftInMarket(uint _tokenId) public view returns (Listed memory) {
         if (!isListed(_tokenId)) {
             revert NOT_LISTED(_tokenId);
         }
@@ -287,7 +287,7 @@ contract CheeseCollection is ERC721URIStorage{
     function ownerOf(uint256 _tokenId) public view override (ERC721, IERC721) returns (address){
         address ret = super.ownerOf(_tokenId);
         if (isListed(_tokenId)){
-            return getNftListed(_tokenId).from;
+            return getNftInMarket(_tokenId).from;
         }else{
             return ret;
         }
