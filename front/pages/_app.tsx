@@ -16,7 +16,16 @@ import {
   sepolia,
   zora,
 } from 'wagmi/chains';
-import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
+import { ConnectButton, RainbowKitProvider, darkTheme, getDefaultConfig } from '@rainbow-me/rainbowkit';
+
+const yellowCheeseTheme = darkTheme({
+  accentColor: '#2C2C2C',
+  accentColorForeground: '#FFD700',
+  borderRadius: 'medium',
+  fontStack: 'system',
+  overlayBlur: 'small',
+
+});
 
 const config = getDefaultConfig({
   appName: 'RainbowKit App',
@@ -57,9 +66,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           <SessionProvider refetchInterval={0} session={pageProps.session}>
             <QueryClientProvider client={client}>
               <RainbowKitSiweNextAuthProvider  getSiweMessageOptions={getSiweMessageOptions}>
-                <RainbowKitProvider modalSize="compact">
+                <RainbowKitProvider modalSize="wide" theme={yellowCheeseTheme}>
                   {getLayout(<Component {...pageProps} />)}
-                </RainbowKitProvider>
+                </RainbowKitProvider> 
               </RainbowKitSiweNextAuthProvider>
             </QueryClientProvider>
           </SessionProvider>

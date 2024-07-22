@@ -1,5 +1,7 @@
 import Link from "next/link";
-import {ConnectButton} from "@rainbow-me/rainbowkit";
+//import {ConnectButton} from "@rainbow-me/rainbowkit";
+import { ConnectButton, RainbowKitProvider, darkTheme } from '@rainbow-me/rainbowkit';
+import '@rainbow-me/rainbowkit/styles.css';
 import React from "react";
 import {
     NavigationMenu,
@@ -49,6 +51,7 @@ const Navbar = () => {
                     </NavigationMenuList>
                 </NavigationMenu>
             </div>
+
             <div className="w-6/12 flex flex-row justify-end max-lg:w-screen max-lg:justify-normal max-lg:ml-4 max-sm:w-full max-sm:justify-center">
                 <ConnectButton/>
             </div>
