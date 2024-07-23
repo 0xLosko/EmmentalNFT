@@ -1,7 +1,13 @@
 import { Button } from "../../components/ui/button"
 import {NextPageWithLayout} from "../_app"
 import Image from 'next/image'
-import { useAccount, useReadContract, type BaseError, useWriteContract, useWaitForTransactionReceipt } from "wagmi"
+import {
+    useAccount,
+    useReadContract,
+    type BaseError,
+    useWriteContract,
+    useWatchContractEvent,
+} from "wagmi";
 import { CollectionContractAbi } from "../../constants"
 import {useRouter} from "next/router";
 import React, {useEffect} from "react";
@@ -73,6 +79,14 @@ const Mint: NextPageWithLayout = () => {
     } = useReadContract({
         ...contractConfig,
         functionName: 'getBaseUri',
+    });
+
+    useWatchContractEvent({
+        ...contractConfig,
+        eventName: "NftMinted",
+        onLogs(log) {
+            refetchNbMint();
+        },
     });
 
     useEffect(() => {

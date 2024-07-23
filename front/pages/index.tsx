@@ -1,6 +1,6 @@
 import { NextPageWithLayout } from "./_app";
 import { useEffect } from "react";
-import { useReadContract } from "wagmi";
+import { useReadContract, useWatchContractEvent } from "wagmi";
 import { contractAddress, FactoryContractAbi } from "../constants";
 import { BusyBox } from "../components/ui/busy-box";
 import {
@@ -11,7 +11,6 @@ import {
     CarouselPrevious,
 } from "../components/ui/carousel";
 import MintCard from "../components/card/mintCard";
-import { Card } from "../components/ui/card";
 import CollectionCard from "../components/card/collectionCard";
 import { Address } from "../types/solidity-native";
 export enum FilterType {
@@ -20,14 +19,19 @@ export enum FilterType {
 }
 
 const Discover: NextPageWithLayout = () => {
+
+    const contractConfig = {
+        address: contractAddress as Address,
+        abi: FactoryContractAbi,
+    };
+
     const {
         data: collectionMintableList,
         isLoading: collectionMintableListLoading,
         refetch: refetchcollectionMintableList,
         error: collectionMintableErr,
     } = useReadContract({
-        address: contractAddress,
-        abi: FactoryContractAbi,
+        ...contractConfig,
         functionName: "getCollections",
         args: [FilterType.MINTABLE],
     });
@@ -38,10 +42,17 @@ const Discover: NextPageWithLayout = () => {
         refetch: refetchcollectionList,
         error: collectionErr,
     } = useReadContract({
-        address: contractAddress,
-        abi: FactoryContractAbi,
+        ...contractConfig,
         functionName: "getCollections",
         args: [FilterType.ALL],
+    });
+
+    useWatchContractEvent({
+        ...contractConfig,
+        eventName: "CollectionCreated",
+        onLogs(log) {
+            refetchcollectionList();
+        },
     });
 
     useEffect(() => {

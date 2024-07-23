@@ -1,5 +1,5 @@
 import { NextPageWithLayout } from "../../_app";
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useReadContract, useWatchContractEvent } from "wagmi";
 import { CollectionContractAbi } from "../../../constants";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -96,6 +96,29 @@ const CollectionPage: NextPageWithLayout = () => {
     const { data: nbMinted } = useReadContract({
         ...contractConfig,
         functionName: "getNbMint"
+    });
+
+    useWatchContractEvent({
+        ...contractConfig,
+        eventName: "NftListed",
+        onLogs(log) {
+            refetchIsListed();
+        },
+    });
+
+    useWatchContractEvent({
+        ...contractConfig,
+        eventName: "NftUnlisted",
+        onLogs(log) {
+            refetchIsListed();
+        },
+    });
+    useWatchContractEvent({
+        ...contractConfig,
+        eventName: "NftSold",
+        onLogs(log) {
+            refetchOwner();
+        },
     });
 
     useEffect(() => {

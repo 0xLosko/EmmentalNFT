@@ -1,6 +1,6 @@
 import { NextPageWithLayout } from "../_app";
 import { useEffect, useState } from "react";
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useReadContract, useWatchContractEvent } from "wagmi";
 import {contractAddress, CollectionContractAbi, FactoryContractAbi} from "../../constants";
 import Image from 'next/image'
 import {FilterType} from "../index";
@@ -9,16 +9,29 @@ import {Address} from "../../types/solidity-native";
 const Profil: NextPageWithLayout = () => {
     const { address } = useAccount();
     const [nft, setNft] = useState<number[]>([]);
+
+    const contractConfig = {
+        address: contractAddress as Address,
+        abi: FactoryContractAbi,
+    };
+
     const {
         data: collectionList,
         isLoading: collectionListLoading,
         refetch: refetchcollectionList,
         error: collectionErr,
     } = useReadContract({
-        address: contractAddress,
-        abi: FactoryContractAbi,
+        ...contractConfig,
         functionName: "getCollections",
         args: [FilterType.ALL],
+    });
+
+    useWatchContractEvent({
+        ...contractConfig,
+        eventName: "CollectionCreated",
+        onLogs(log) {
+            refetchcollectionList();
+        },
     });
 
 

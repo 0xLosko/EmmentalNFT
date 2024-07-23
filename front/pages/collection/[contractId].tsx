@@ -1,7 +1,7 @@
 import { Button } from "../../components/ui/button";
 import { NextPageWithLayout } from "../_app";
 import Image from "next/image";
-import { useAccount, useReadContract } from "wagmi";
+import { useAccount, useReadContract, useWatchContractEvent } from "wagmi";
 import { CollectionContractAbi } from "../../constants";
 import { useRouter } from "next/router";
 import React, { useEffect, useState, useMemo } from "react";
@@ -12,7 +12,7 @@ import { BuyButton } from "../../components/button/buyButton";
 interface NftItems {
     listed: boolean;
     number: number;
-    price: number | undefined;
+    price: bigint | undefined;
 }
 
 const CollectionPage: NextPageWithLayout = () => {
@@ -52,6 +52,29 @@ const CollectionPage: NextPageWithLayout = () => {
     const [nftList, setNftList] = useState<NftItems[]>([]);
     const [sortOrder, setSortOrder] = useState<'number-asc' | 'number-desc' | 'price-asc' | 'price-desc'>('number-asc');
 
+    useWatchContractEvent({
+        ...contractConfig,
+        eventName: "NftListed",
+        onLogs(log) {
+            refetchNftListed();
+        },
+    });
+
+    useWatchContractEvent({
+        ...contractConfig,
+        eventName: "NftUnlisted",
+        onLogs(log) {
+            refetchNftListed();
+        },
+    });
+    useWatchContractEvent({
+        ...contractConfig,
+        eventName: "NftSold",
+        onLogs(log) {
+            refetchNftListed();
+        },
+    });
+
     useEffect(() => {
         refetchName();
         refetchMaximumSupply();
@@ -62,7 +85,7 @@ const CollectionPage: NextPageWithLayout = () => {
 
     useEffect(() => {
         if (!nftListedLoading && maximumSupply && nftListed) {
-            const list = createListed(maximumSupply, nftListed);
+            const list = createListed(maximumSupply as number, nftListed);
             setNftList(list);
         }
     }, [nftListedLoading, maximumSupply, nftListed]);
@@ -74,7 +97,7 @@ const CollectionPage: NextPageWithLayout = () => {
                 list.push({
                     listed: true,
                     number: i,
-                    price: nftListed[i].price ? Number(ethers.utils.formatEther(nftListed[i].price)) : undefined
+                    price: nftListed[i].price ? BigInt(ethers.utils.formatEther(nftListed[i].price)) : undefined
                 });
             } else {
                 list.push({
@@ -94,9 +117,14 @@ const CollectionPage: NextPageWithLayout = () => {
         } else if (sortOrder === 'number-desc') {
             sortedList.sort((a, b) => b.number - a.number);
         } else if (sortOrder === 'price-asc') {
-            sortedList.sort((a, b) => (a.price ?? Infinity) - (b.price ?? Infinity));
+            sortedList.sort(
+                (a, b) =>
+                    (Number(a.price) ?? Infinity) - (Number(b.price) ?? Infinity)
+            );
         } else if (sortOrder === 'price-desc') {
-            sortedList.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
+            sortedList.sort(
+                (a, b) => (Number(b.price) ?? 0) - (Number(a.price) ?? 0)
+            );
         }
         return sortedList;
     }, [nftList, sortOrder]);
@@ -134,12 +162,17 @@ const CollectionPage: NextPageWithLayout = () => {
                         ? "Loading..."
                         : Number(maximumSupply)}
                 </p>
-                <p className="text-customYellow mt-2">
-                    {desc && desc}
-                </p>
+                <p className="text-customYellow mt-2">{desc ? (desc as string) : ""}</p>
                 <div className="flex gap-4 mt-4 items-center">
-                    <label htmlFor="sortOrder" className="mr-2">Sort by:</label>
-                    <select id="sortOrder" onChange={handleSortChange} value={sortOrder} className="p-2 rounded text-customYellow bg-cardBg">
+                    <label htmlFor="sortOrder" className="mr-2">
+                        Sort by:
+                    </label>
+                    <select
+                        id="sortOrder"
+                        onChange={handleSortChange}
+                        value={sortOrder}
+                        className="p-2 rounded text-customYellow bg-cardBg"
+                    >
                         <option value="number-asc">Number Ascending</option>
                         <option value="number-desc">Number Descending</option>
                         <option value="price-asc">Price Ascending</option>
@@ -152,7 +185,11 @@ const CollectionPage: NextPageWithLayout = () => {
                     <div
                         className="nft-item p-4 rounded-lg bg-cardBg cursor-pointer"
                         key={index}
-                        onClick={() => { router.push(router.asPath + '/' + nft.number.toString()) }}
+                        onClick={() => {
+                            router.push(
+                                router.asPath + "/" + nft.number.toString()
+                            );
+                        }}
                     >
                         <Image
                             src={nftUrl as string}
@@ -172,11 +209,12 @@ const CollectionPage: NextPageWithLayout = () => {
                         {nft.listed && (
                             <div className="flex">
                                 <p className="text-gray-500">
-                                    Listed, Price: <span className="text-customYellow">{nft.price} ETH</span>
+                                    Listed, Price:{" "}
+                                    <span className="text-customYellow">
+                                        {nft.price} ETH
+                                    </span>
                                 </p>
-                                <BuyButton
-                                    text="View Now"
-                                />
+                                <BuyButton text="View Now" price={nft.price ?? BigInt(0)} />
                             </div>
                         )}
                     </div>
