@@ -4,5 +4,8 @@ export interface Listed {
         from: string;
         to: string;
         tokenId: number;
-        timestamp: number;
+    timestamp: number;
+    status: number;
     }
+
+export const Status = [""]

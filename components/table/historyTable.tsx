@@ -26,10 +26,11 @@ export function HistoryTable({ histories, address }: { histories: Listed[]; addr
                         <TableHead>From</TableHead>
                         <TableHead>To</TableHead>
                         <TableHead className="text-right">Price</TableHead>
+                        <TableHead className="text-right">Status</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {histories.map((history, index) => (
+                    {histories.map((history, index) => { return history.status === 1 ? (
                         <TableRow key={index}>
                             <TableCell className="font-medium">
                                 {new Date(
@@ -57,7 +58,7 @@ export function HistoryTable({ histories, address }: { histories: Listed[]; addr
                                 {ethers.utils.formatEther(history.price)} ETH
                             </TableCell>
                         </TableRow>
-                    ))}
+                    ) : undefined})}
                 </TableBody>
             </Table>
         </div>
