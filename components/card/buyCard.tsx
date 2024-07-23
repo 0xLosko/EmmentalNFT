@@ -10,10 +10,11 @@ import {
 import { ethers } from "ethers";
 import { useRouter } from "next/router";
 import { BuyButton } from "../button/buyButton";
-import { useChainId } from "wagmi";
+import { useChainId, useAccount } from "wagmi";
 
 export function BuyCard({ price }: { price: bigint }) {
     const chainId = useChainId();
+    const { isConnected } = useAccount();
     
     return (
         <div className="ml-4 rounded-2xl p-px bg-gradient-to-b from-[#414141] to-[#24210F] w-full hover:to-[#414141] ">
@@ -31,7 +32,7 @@ export function BuyCard({ price }: { price: bigint }) {
                     </CardDescription>
                 </CardHeader>
                 <CardFooter className="flex justify-between">
-                    <BuyButton price={Number(price)} text="Buy" />
+                    <BuyButton disabled={!isConnected} price={Number(price)} text="Buy" />
                 </CardFooter>
             </Card>
         </div>

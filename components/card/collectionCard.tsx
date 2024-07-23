@@ -1,18 +1,12 @@
 "use client"
 import React, { useEffect } from 'react';
-import Image from 'next/image';
-import { Button } from '../ui/button';
 import {
     Card,
     CardContent,
-    CardDescription,
     CardFooter,
-    CardHeader,
-    CardTitle,
 } from '../ui/card';
-import { Progress } from '../ui/progress';
 import {CollectionContractAbi, contractAddress} from '../../constants';
-import {useAccount, useReadContract} from 'wagmi';
+import { useReadContract} from 'wagmi';
 import {useRouter} from "next/router";
 import { Address } from '../../types/solidity-native';
 export enum FilterType {
@@ -22,7 +16,7 @@ export enum FilterType {
 
 const CollectionCard = ({ contractAdr }: { contractAdr: Address }) => {
     const router = useRouter();
-    const adr = useAccount();
+    
     const contractConfig = {
         address: contractAdr,
         abi: CollectionContractAbi,

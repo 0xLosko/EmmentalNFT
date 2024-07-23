@@ -199,6 +199,7 @@ function ProfileForm() {
                                             {...field}
                                         />
                                         <ImageFileInput
+                                            disabled={!account.isConnected}
                                             onChange={field.onChange}
                                             className="w-max-[400px] h-max-[150px]"
                                         />
@@ -215,6 +216,7 @@ function ProfileForm() {
                 </div>
                 <div className="flex justify-center w-full">
                     <Button
+                        disabled={!account.isConnected}
                         className="w-1/4 bg-customYellow/80 hover:bg-customYellow"
                         type="submit"
                     >

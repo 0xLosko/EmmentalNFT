@@ -27,7 +27,7 @@ export function ManageNftCard({
     const chainId = useChainId();
     const router = useRouter();
     const tokenId = router.query.tokenId;
-    const { address } = useAccount();
+    const { address, isConnected } = useAccount();
     const contractConfig = {
         address: router.query.contractId as Address,
         abi: CollectionContractAbi,
@@ -92,6 +92,7 @@ export function ManageNftCard({
                 <CardFooter className="flex justify-between">
                     {/* <Button variant="outline">Cancel</Button> */}
                     <Button
+                        disabled={!isConnected}
                         className="ml-auto bg-customYellow/80 hover:bg-customYellow"
                         onClick={() =>
                             listed

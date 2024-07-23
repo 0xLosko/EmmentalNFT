@@ -22,7 +22,6 @@ interface NftItems {
 
 const CollectionPage: NextPageWithLayout = () => {
     const chainId = useChainId();
-    const { address } = useAccount();
     const router = useRouter();
 
     const contractConfig = {
