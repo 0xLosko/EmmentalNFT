@@ -79,7 +79,7 @@ const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
     }, [getAllNftInMarket, account.address]);
 
     if (nftUrlLoading || getNftIdForWalletLoading || nameLoading || getAllNftInMarketLoading) {
-        return "loading";
+        return "";
     }
 
     const combinedTokenIds = [...(nftIdForWallet as number[]), ...filteredTokenIds].sort();
@@ -89,8 +89,8 @@ const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
             {combinedTokenIds.length > 0 ? (
                 combinedTokenIds.map((id: number) => {
                     const nft = (getAllNftInMarket as Listed[]).find(nft => nft.tokenId === id && nft.from === account.address);
-                    const isListed = !  !nft;
-                    const price = isListed ? Number(ethers.utils.formatEther(nft.price)) : null;
+                    const isListed = !!nft;
+                    const price = isListed ? Number(ethers.utils.formatEther(nft!.price)) : null;
 
                     return (
                         <div

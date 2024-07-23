@@ -40,7 +40,7 @@ const Profil: NextPageWithLayout = () => {
     }, []);
 
     if(collectionListLoading) {
-        return ("Loading");
+        return "";
     }
     return (
         <div className="flex gap-3">
