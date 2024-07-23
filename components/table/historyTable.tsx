@@ -26,7 +26,6 @@ export function HistoryTable({ histories, address }: { histories: Listed[]; addr
                         <TableHead>From</TableHead>
                         <TableHead>To</TableHead>
                         <TableHead className="text-right">Price</TableHead>
-                        <TableHead className="text-right">Status</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>

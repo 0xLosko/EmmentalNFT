@@ -176,14 +176,14 @@ const CollectionPage: NextPageWithLayout = () => {
                             initialPrice={
                                 marketData
                                     ? (marketData as Listed).price
-                                    : BigInt(0)
+                                    : 0
                             }
                         />
                     ) : isListed ? (
                         <BuyCard
                             price={
                                 marketData
-                                    ? (marketData as Listed).price
+                                    ? BigInt((marketData as Listed).price)
                                     : BigInt(0)
                             }
                         />

@@ -7,6 +7,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Address } from "../../types/solidity-native";
 import { ethers } from "ethers";
 import { BuyButton } from "../../components/button/buyButton";
+import { Listed } from "../../types/listed";
 
 interface NftItems {
     listed: boolean;
@@ -90,21 +91,19 @@ const CollectionPage: NextPageWithLayout = () => {
     }, [nftListedLoading, maximumSupply, nftListed]);
 
     const createListed = (maxSupply: number, nftListed: any): NftItems[] => {
+        console.log(nftListed);
         const list: NftItems[] = [];
         for (let i = 0; i < maxSupply; i++) {
-            if (nftListed[i]) {
-                list.push({
-                    listed: true,
-                    number: i,
-                    price: nftListed[i].price ? Number(ethers.utils.formatEther(nftListed[i].price)) : undefined
-                });
-            } else {
-                list.push({
-                    listed: false,
-                    number: i,
-                    price: undefined
-                });
-            }
+            list.push({
+                listed: false,
+                number: i,
+                price: undefined
+            });
+        }
+        for (let i = 0; i < nftListed.length; i++) {
+            const currentId = (nftListed[i] as Listed).tokenId
+            list[currentId].listed = true;
+            list[currentId].price = nftListed[i].price ? Number(ethers.utils.formatEther(nftListed[i].price)) : undefined;
         }
         return list;
     };
