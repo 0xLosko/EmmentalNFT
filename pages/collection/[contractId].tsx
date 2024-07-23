@@ -12,7 +12,7 @@ import { BuyButton } from "../../components/button/buyButton";
 interface NftItems {
     listed: boolean;
     number: number;
-    price: bigint | undefined;
+    price: number | undefined;
 }
 
 const CollectionPage: NextPageWithLayout = () => {
@@ -97,7 +97,7 @@ const CollectionPage: NextPageWithLayout = () => {
                 list.push({
                     listed: true,
                     number: i,
-                    price: nftListed[i].price ? BigInt(ethers.utils.formatEther(nftListed[i].price)) : undefined
+                    price: nftListed[i].price ? Number(ethers.utils.formatEther(nftListed[i].price)) : undefined
                 });
             } else {
                 list.push({
