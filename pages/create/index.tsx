@@ -24,6 +24,8 @@ import {
 import { Input } from "../../components/ui/input"
 import { useAccount, useWriteContract } from "wagmi";
 import { contractAddress, FactoryContractAbi } from "../../constants";
+import { ImageFileInput } from "../../components/ui/imageFileInput"
+import { ChangeEventHandler, useState } from "react"
 
 const formSchema = z.object({
     name: z.string().min(4, {
@@ -43,6 +45,7 @@ const formSchema = z.object({
 })
 
 function ProfileForm() {
+    const [imageFileName, setImageFileName] = useState("");
     const account = useAccount();
     const { data: hash, writeContract } = useWriteContract()
 
@@ -81,7 +84,7 @@ function ProfileForm() {
                     <FormField
                         control={form.control}
                         name="name"
-                        render={({field}) => (
+                        render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Name</FormLabel>
                                 <FormControl>
@@ -90,14 +93,14 @@ function ProfileForm() {
                                 <FormDescription>
                                     This is the Name of the collection.
                                 </FormDescription>
-                                <FormMessage/>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="symbol"
-                        render={({field}) => (
+                        render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Symbol</FormLabel>
                                 <FormControl>
@@ -106,55 +109,67 @@ function ProfileForm() {
                                 <FormDescription>
                                     This is the Symbol of the collection.
                                 </FormDescription>
-                                <FormMessage/>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="desc"
-                        render={({field}) => (
+                        render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Description</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="description" {...field} />
+                                    <Input
+                                        placeholder="description"
+                                        {...field}
+                                    />
                                 </FormControl>
                                 <FormDescription>
                                     This is the description of the collection.
                                 </FormDescription>
-                                <FormMessage/>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="agingMethod"
-                        render={({field}) => (
+                        render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Aging Method</FormLabel>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                >
                                     <FormControl>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select an aging method"/>
+                                            <SelectValue placeholder="Select an aging method" />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
                                         <SelectItem value="0">cave</SelectItem>
-                                        <SelectItem value="1">hayloft</SelectItem>
-                                        <SelectItem value="2">openAir</SelectItem>
+                                        <SelectItem value="1">
+                                            hayloft
+                                        </SelectItem>
+                                        <SelectItem value="2">
+                                            openAir
+                                        </SelectItem>
                                         <SelectItem value="3">salt</SelectItem>
-                                        <SelectItem value="4">pressing</SelectItem>
+                                        <SelectItem value="4">
+                                            pressing
+                                        </SelectItem>
                                         <SelectItem value="5">cold</SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <FormMessage/>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="maximumSupply"
-                        render={({field}) => (
+                        render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Max Supply</FormLabel>
                                 <FormControl>
@@ -162,35 +177,49 @@ function ProfileForm() {
                                         type="number"
                                         placeholder="10000"
                                         {...field}
-                                        onChange={(e) => field.onChange(Number(e.target.value))}
                                     />
                                 </FormControl>
                                 <FormDescription>
                                     This is the max supply for the collection.
                                 </FormDescription>
-                                <FormMessage/>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
                     <FormField
                         control={form.control}
                         name="imageUrl"
-                        render={({field}) => (
+                        render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Image Url</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="https://www.image.com/url?" {...field} />
+                                    <div className="flex flex-col items-center gap-2">
+                                        <Input
+                                            placeholder="https://www.image.com/url?"
+                                            {...field}
+                                        />
+                                        <ImageFileInput
+                                            onChange={field.onChange}
+                                            className="w-max-[400px] h-max-[150px]"
+                                        />
+                                    </div>
                                 </FormControl>
                                 <FormDescription>
-                                    This is the case for setup the url image for NFT.
+                                    This is the case for setup the url image for
+                                    NFT.
                                 </FormDescription>
-                                <FormMessage/>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
                 </div>
                 <div className="flex justify-center w-full">
-                    <Button className="w-1/4 bg-customYellow/80 hover:bg-customYellow" type="submit">Submit</Button>
+                    <Button
+                        className="w-1/4 bg-customYellow/80 hover:bg-customYellow"
+                        type="submit"
+                    >
+                        Submit
+                    </Button>
                 </div>
             </form>
         </Form>

@@ -27,6 +27,7 @@
     "embla-carousel-react": "^8.1.6",
     "ethers": "^5.7.2",
     "hardhat": "^2.22.5",
+    "ipfs-http-client": "^60.0.1",
     "lucide-react": "^0.395.0",
     "mongoose": "^8.5.1",
     "next": "^14.0.4",
