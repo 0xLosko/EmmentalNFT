@@ -223,8 +223,6 @@ contract CheeseCollection is ERC721URIStorage{
     }
 
     function buyNft(uint256 _tokenId) public payable {
-        // NFT PRICE IN WEI !!
-        //CONDITION POUR PAS SE LACHETER A SOIT MEME
         if (!isListed(_tokenId)) {
             revert NOT_LISTED(_tokenId);
         }
@@ -240,9 +238,6 @@ contract CheeseCollection is ERC721URIStorage{
         emit NftSold(_tokenId);
         nbListedNft--;
     }
-
-
-    //overide balance of avec les nft listés
 
     function getAllNftInMarket() public view returns (Listed[] memory){
         Listed[] memory rt = new Listed[](nbListedNft);
