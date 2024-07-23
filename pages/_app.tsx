@@ -15,8 +15,20 @@ import {
     hardhat,
   sepolia,
   zora,
+  avalancheFuji
 } from 'wagmi/chains';
-import { ConnectButton, RainbowKitProvider, darkTheme, getDefaultConfig } from '@rainbow-me/rainbowkit';
+import {
+    ConnectButton,
+    RainbowKitProvider,
+    darkTheme,
+    getDefaultConfig,
+} from "@rainbow-me/rainbowkit";
+import {
+    rainbowWallet,
+  walletConnectWallet,
+  metaMaskWallet,
+    coreWallet
+} from "@rainbow-me/rainbowkit/wallets";
 
 const yellowCheeseTheme = darkTheme({
   accentColor: '#2C2C2C',
@@ -28,12 +40,21 @@ const yellowCheeseTheme = darkTheme({
 });
 
 const config = getDefaultConfig({
-  appName: 'RainbowKit App',
-  projectId: '12d66ee7fe7f31eef0181c18a51f4873',
-  chains: [
-    hardhat, sepolia
-  ],
-  ssr: true,
+    appName: "RainbowKit App",
+    projectId: "12d66ee7fe7f31eef0181c18a51f4873",
+    chains: [hardhat, sepolia, avalancheFuji],
+    wallets: [
+        {
+            groupName: "Recommended",
+            wallets: [
+                rainbowWallet,
+                walletConnectWallet,
+                metaMaskWallet,
+                coreWallet,
+            ],
+        },
+    ],
+    ssr: true,
 });
 
 import {

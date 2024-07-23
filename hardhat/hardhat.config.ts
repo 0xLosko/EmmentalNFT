@@ -12,12 +12,11 @@ const config: HardhatUserConfig = {
         localhost: {
             url: "http://127.0.0.1:8545",
         },
-        // avalancheTest: {
-        //     url: "https://api.avax-test.network/ext/bc/C/rpc",
-        //     gasPrice: 225000000000,
-        //     chainId: 43113,
-        //     accounts: [process.env.AVALANCHE_TESTNET_PK!],
-        // },
+        avalancheTest: {
+            url: "https://api.avax-test.network/ext/bc/C/rpc",//`https://avalanche-fuji.infura.io/v3/${INFURA_TOKEN}`,
+            chainId: 43113,
+            accounts: [process.env.AVALANCHE_TESTNET_PK!],
+        },
         /*sepolia: {
             url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_TOKEN}`,
             accounts: [`${process.env.SEPOLIA_PRIVATE_KEY}`],

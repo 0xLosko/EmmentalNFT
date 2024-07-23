@@ -2,7 +2,7 @@ import FactoryCompiledJson from "../hardhat/artifacts/contracts/cheese-factory.s
 import CollectionCompiledJson from "../hardhat/artifacts/contracts/cheese-collection.sol/CheeseCollection.json";
 export const FactoryContractAbi = FactoryCompiledJson.abi;
 export const CollectionContractAbi = CollectionCompiledJson.abi;
-export const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+export const contractAddress = "0xe01F1A1b5faC39A3664097c2eD16ba54C73851D1";
 
 enum Aging {
     cave, // Affinage en cave
