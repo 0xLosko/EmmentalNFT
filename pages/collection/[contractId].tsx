@@ -1,4 +1,3 @@
-import { Button } from "../../components/ui/button";
 import { NextPageWithLayout } from "../_app";
 import Image from "next/image";
 import { useAccount, useReadContract, useWatchContractEvent } from "wagmi";
@@ -214,7 +213,7 @@ const CollectionPage: NextPageWithLayout = () => {
                                         {nft.price} ETH
                                     </span>
                                 </p>
-                                <BuyButton text="View Now" price={nft.price ?? BigInt(0)} />
+                                <BuyButton text="View Now" price={Number(nft.price) ?? Number(0)} />
                             </div>
                         )}
                     </div>

@@ -22,7 +22,7 @@ export function ManageNftCard({
     initialPrice,
 }: {
     listed: boolean;
-    initialPrice: bigint}) {
+    initialPrice: number}) {
     const router = useRouter();
     const tokenId = router.query.tokenId;
     const { address } = useAccount();

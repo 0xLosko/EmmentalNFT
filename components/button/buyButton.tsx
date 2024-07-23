@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { CollectionContractAbi } from "../../constants";
 import { useAccount, useWriteContract } from "wagmi";
 
-export function BuyButton({ price, text }: { price: bigint, text: string }) {
+export function BuyButton({ price, text }: { price: number, text: string }) {
     const router = useRouter();
     const tokenId = router.query.tokenId;
     const { address } = useAccount();
