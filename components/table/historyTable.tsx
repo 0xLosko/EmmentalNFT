@@ -10,10 +10,12 @@ import {
     TableHeader,
     TableRow,
 } from "../ui/table";
+import { useChainId } from "wagmi";
 import Link from "next/link";
 import { Address } from "../../types/solidity-native";
 
 export function HistoryTable({ histories, address }: { histories: Listed[]; address: Address }) {
+    const chainId = useChainId();
     return (
         <div className="ml-4 rounded-2xl p-px bg-gradient-to-b from-[#414141] to-[#24210F] w-full hover:to-[#414141] max-sm:ml-0 max-sm:my-8">
             <Table className="rounded-2xl p-px bg-gradient-to-b from-[#2c2c2c] to-[#24210F] w-full hover:to-[#2c2c2c]">
@@ -54,10 +56,11 @@ export function HistoryTable({ histories, address }: { histories: Listed[]; addr
                                 </Link>
                             </TableCell>
                             <TableCell className="text-right">
-                                {ethers.utils.formatEther(history.price)} ETH
+                                {ethers.utils.formatEther(history.price)}{" "}
+                                {chainId === 43113 ? "AVAX" : "ETH"}
                             </TableCell>
                         </TableRow>
-                    ) : undefined})}
+                    ) : undefined;})}
                 </TableBody>
             </Table>
         </div>

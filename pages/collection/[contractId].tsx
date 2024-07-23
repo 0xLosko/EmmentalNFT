@@ -1,6 +1,11 @@
 import { NextPageWithLayout } from "../_app";
 import Image from "next/image";
-import { useAccount, useReadContract, useWatchContractEvent } from "wagmi";
+import {
+    useAccount,
+    useReadContract,
+    useWatchContractEvent,
+    useChainId,
+} from "wagmi";
 import { CollectionContractAbi } from "../../constants";
 import { useRouter } from "next/router";
 import React, { useEffect, useState, useMemo } from "react";
@@ -16,6 +21,7 @@ interface NftItems {
 }
 
 const CollectionPage: NextPageWithLayout = () => {
+    const chainId = useChainId();
     const { address } = useAccount();
     const router = useRouter();
 
@@ -160,7 +166,9 @@ const CollectionPage: NextPageWithLayout = () => {
                         ? "Loading..."
                         : Number(maximumSupply)}
                 </p>
-                <p className="text-customYellow mt-2">{desc ? (desc as string) : ""}</p>
+                <p className="text-customYellow mt-2">
+                    {desc ? (desc as string) : ""}
+                </p>
                 <div className="flex gap-4 mt-4 items-center">
                     <label htmlFor="sortOrder" className="mr-2">
                         Sort by:
@@ -209,10 +217,14 @@ const CollectionPage: NextPageWithLayout = () => {
                                 <p className="text-gray-500">
                                     Listed, Price:{" "}
                                     <span className="text-customYellow">
-                                        {nft.price} ETH
+                                        {nft.price}{" "}
+                                        {chainId === 43113 ? "AVAX" : "ETH"}
                                     </span>
                                 </p>
-                                <BuyButton text="View Now" price={Number(nft.price) ?? Number(0)} />
+                                <BuyButton
+                                    text="View Now"
+                                    price={Number(nft.price) ?? Number(0)}
+                                />
                             </div>
                         )}
                     </div>

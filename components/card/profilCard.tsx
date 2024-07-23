@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { CollectionContractAbi } from '../../constants';
-import { useAccount, useReadContract } from 'wagmi';
+import { useAccount, useReadContract, useChainId } from "wagmi";
 import { useRouter } from "next/router";
 import { Address } from '../../types/solidity-native';
 import { ethers } from 'ethers';
@@ -14,6 +14,7 @@ export enum FilterType {
 }
 
 const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
+    const chainId = useChainId();
     const router = useRouter();
     const account = useAccount();
     const [filteredTokenIds, setFilteredTokenIds] = useState<number[]>([]);
@@ -97,7 +98,9 @@ const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
                             className="nft-item p-4 rounded-lg bg-cardBg cursor-pointer"
                             key={id}
                             onClick={() => {
-                                router.push('/collection/' + contractAdr + '/' + id);
+                                router.push(
+                                    "/collection/" + contractAdr + "/" + id
+                                );
                             }}
                         >
                             <Image
@@ -116,7 +119,8 @@ const ProfileCard = ({ contractAdr }: { contractAdr: Address }) => {
                                 {name + " #" + id}
                             </h2>
                             <h3>
-                                {isListed && `Listed ${price} ETH`}
+                                {isListed &&
+                                    `Listed ${price} ${chainId === 43113 ? "AVAX" : "ETH"}`}
                             </h3>
                         </div>
                     );

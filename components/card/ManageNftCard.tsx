@@ -15,14 +15,16 @@ import { ethers } from "ethers";
 import { Address } from "../../types/solidity-native";
 import { useRouter } from "next/router";
 import { CollectionContractAbi } from "../../constants";
-import { useAccount, useWriteContract } from "wagmi";
+import { useAccount, useWriteContract, useChainId } from "wagmi";
 
 export function ManageNftCard({
     listed,
     initialPrice,
 }: {
     listed: boolean;
-    initialPrice: number}) {
+    initialPrice: number
+}) {
+    const chainId = useChainId();
     const router = useRouter();
     const tokenId = router.query.tokenId;
     const { address } = useAccount();
@@ -78,14 +80,13 @@ export function ManageNftCard({
                             className="text-gray-400"
                             value={price.toString()}
                             onChange={(event) =>
-                                setPrice(
-                                    Number(
-                                            event.target.value
-                                    )
-                                )
+                                setPrice(Number(event.target.value))
                             }
                         />
-                        <Label className="text-gray-400 pt-3"> ETH</Label>
+                        <Label className="text-gray-400 pt-3">
+                            {" "}
+                            {chainId === 43113 ? "AVAX" : "ETH"}
+                        </Label>
                     </div>
                 </CardContent>
                 <CardFooter className="flex justify-between">
