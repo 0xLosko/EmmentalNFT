@@ -1,12 +1,51 @@
+"use client"
+
 import * as React from "react";
 
 import { cn } from "../../lib/utils";
+import { useRef, useState } from "react";
 
-export interface InputProps
-    extends React.InputHTMLAttributes<HTMLInputElement> {}
+interface ev {
+    target: {value: string}
+}
+
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+    onCIDLoaded: (event: ev) => void;
+}
 
 const ImageFileInput = React.forwardRef<HTMLInputElement, InputProps>(
-    ({ className, ...props }, ref) => {
+    ({ onCIDLoaded, className, ...props }, ref) => {
+
+        const inputFile = useRef(null);
+
+        const uploadFile = async (fileToUpload: File) => {
+            try {
+                // setUploading(() => true);
+                const data = new FormData();
+                data.set("file", fileToUpload);
+                const res = await fetch("/api/files", {
+                    method: "POST",
+                    body: data,
+                });
+                const resData = await res.json();
+                onCIDLoaded({ target: { value: "https://ipfs.io/ipfs/" + resData.IpfsHash } });
+                console.log(resData.IpfsHash);
+                // setUploading(() => false);
+            } catch (e) {
+                console.log(e);
+                // setUploading(() => false);
+                alert("Trouble uploading file");
+            }
+        };
+
+        const handleChange: React.ChangeEventHandler<HTMLInputElement> = async (
+            e
+        ) => {
+            if (e.target.files) {
+                uploadFile(e.target.files[0]);
+            }
+        };
+
         return (
             <div
                 className={cn(
@@ -15,7 +54,7 @@ const ImageFileInput = React.forwardRef<HTMLInputElement, InputProps>(
                 )}
             >
                 <label
-                    htmlFor="dropzone-file"
+                    html-for="dropzone-file"
                     className="flex flex-col items-center justify-center w-full border-dashed rounded-lg cursor-pointer bg-customYellow/80 hover:bg-customYellow dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
                 >
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -28,9 +67,9 @@ const ImageFileInput = React.forwardRef<HTMLInputElement, InputProps>(
                         >
                             <path
                                 stroke="currentColor"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
                                 d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                             />
                         </svg>
@@ -50,6 +89,7 @@ const ImageFileInput = React.forwardRef<HTMLInputElement, InputProps>(
                         ref={ref}
                         {...props}
                         className="hidden"
+                        onChange={handleChange}
                     />
                 </label>
             </div>

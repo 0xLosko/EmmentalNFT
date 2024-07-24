@@ -45,7 +45,6 @@ const formSchema = z.object({
 })
 
 function ProfileForm() {
-    const [imageFileName, setImageFileName] = useState("");
     const account = useAccount();
     const { data: hash, writeContract } = useWriteContract()
 
@@ -200,8 +199,8 @@ function ProfileForm() {
                                         />
                                         <ImageFileInput
                                             disabled={!account.isConnected}
-                                            onChange={field.onChange}
                                             className="w-max-[400px] h-max-[150px]"
+                                            onCIDLoaded={field.onChange}
                                         />
                                     </div>
                                 </FormControl>
