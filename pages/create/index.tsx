@@ -176,6 +176,7 @@ function ProfileForm() {
                                         type="number"
                                         placeholder="10000"
                                         {...field}
+                                        onChange={(e) => field.onChange(Number(e.target.value))}
                                     />
                                 </FormControl>
                                 <FormDescription>
